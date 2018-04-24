@@ -9,14 +9,31 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_margin="7dp"
         android:orientation="vertical">
 
-        <TextView
-            android:id="@+id/textView2"
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="20dp"
-            android:text="@string/tituloRegistro" />
+            android:layout_height="match_parent"
+            android:layout_margin="5dp"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/textView2"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="20dp"
+                android:layout_weight="1"
+                android:text="@string/tituloRegistro" />
+
+            <ImageView
+                android:id="@+id/imgPerfil"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_margin="0dp"
+                android:layout_weight="1"
+                app:srcCompat="@drawable/ic_menu_camera" />
+        </LinearLayout>
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -24,7 +41,7 @@
             android:orientation="horizontal">
 
             <TextView
-                android:id="@+id/txtRegNick"
+                android:id="@+id/lblRegNick"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_margin="0dp"
@@ -33,21 +50,22 @@
                 android:text="@string/txtRegNick" />
 
             <EditText
-                android:id="@+id/nickNombre"
+                android:id="@+id/txtRegnickNombre"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:ems="10"
                 android:inputType="textPersonName" />
 
-            <ImageButton
-                android:id="@+id/btnComprobadorInstagram"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                app:srcCompat="@android:drawable/ic_media_play" />
-
         </LinearLayout>
+
+        <Button
+            android:id="@+id/btnRegComprobar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:onClick="clicComprobar"
+            android:text="Comprobar" />
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -65,7 +83,7 @@
                 android:text="Numero Telefono" />
 
             <EditText
-                android:id="@+id/txtNumero"
+                android:id="@+id/txtRegNumero"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
@@ -90,7 +108,7 @@
                 android:text="Correo Electronico" />
 
             <EditText
-                android:id="@+id/txtCorreoE"
+                android:id="@+id/txtRegCorreoE"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
@@ -115,7 +133,7 @@
                 android:text="Localidad" />
 
             <EditText
-                android:id="@+id/txtLocalidad"
+                android:id="@+id/txtRegLocalidad"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
@@ -140,7 +158,7 @@
                 android:text="Contraseña: " />
 
             <EditText
-                android:id="@+id/editText5"
+                android:id="@+id/txtRegPassWord"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
@@ -165,7 +183,7 @@
                 android:text="Edad: " />
 
             <EditText
-                android:id="@+id/editText6"
+                android:id="@+id/txtRegEdad"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
@@ -190,12 +208,19 @@
                 android:text="Genero: " />
 
             <Spinner
-                android:id="@+id/spinner"
+                android:id="@+id/spiRegGenero"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1" />
 
         </LinearLayout>
+
+        <Button
+            android:id="@+id/btnRegistrar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:onClick="resgistrar"
+            android:text="REGISTRAR" />
 
     </LinearLayout>
 </android.support.constraint.ConstraintLayout>
