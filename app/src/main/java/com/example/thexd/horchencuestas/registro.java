@@ -18,6 +18,8 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
+import android.widget.ScrollView;
 import android.widget.Spinner;
 import android.widget.Toast;
 
@@ -33,6 +35,8 @@ import java.util.regex.Pattern;
 
 public class registro extends AppCompatActivity {
 
+    ConexionBD gett=new ConexionBD();
+    //Registro
     Spinner spiGenero;
     EditText txtPassword;
     EditText txtNick;
@@ -42,9 +46,19 @@ public class registro extends AppCompatActivity {
     String enlace="";
     EditText txtLocalidad;
     Button btnComprobarNick;
-
     ImageView fotoPerfil;
-    Bitmap mapaImagen;
+
+
+    //Visualizacion
+    ScrollView inicio;
+    ScrollView registro;
+    RelativeLayout relativo;
+
+    //Inicio
+    EditText txtIniCorreo;
+    EditText txtIniPass;
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,7 +79,16 @@ public class registro extends AppCompatActivity {
         txtLocalidad=(EditText) findViewById(R.id.txtRegLocalidad);
         btnComprobarNick=(Button) findViewById(R.id.btnRegComprobar);
         fotoPerfil=(ImageView) findViewById(R.id.imgPerfil);
+        inicio=(ScrollView) findViewById(R.id.scrollInicio);
+        registro=(ScrollView) findViewById(R.id.scrollRegistro);
+        relativo=(RelativeLayout) findViewById(R.id.relativoCuenta);
+
+        //inicio---------------------------
+        txtIniCorreo=(EditText) findViewById(R.id.txtInicioNick);
+        txtIniPass=(EditText) findViewById(R.id.txtInicioPass);
     }
+
+
     public void clicComprobar(View v){
         btnComprobarNick.setText("Loading...");
         final Handler mHandler = new Handler();
@@ -106,7 +129,7 @@ public class registro extends AppCompatActivity {
         }.start();
     }
 
-public void resgistrar(View v){
+    public void resgistrar(View v){
     String nombre=txtNick.getText().toString();
     String numero=txtNumber.getText().toString();
     String correo=txtCorreo.getText().toString();
@@ -130,20 +153,20 @@ public void resgistrar(View v){
     if (localidad.length()>2){
         x++;
     }
-    if (!(txtEdad.getText().toString().isEmpty())){
+    if (!(txtEdad.getText().toString().equals(""))){
         x++;
     }
-    if (!(txtPassword.getText().toString().isEmpty())){
+    if (!(txtPassword.getText().toString().equals(""))){
         x++;
     }
     genero=spiGenero.getSelectedItem().toString();
 
 
 
-    if (x==6){
-
-
-    new ConexionBD().execute("Usu","i",nombre+"-"+numero+"-"+localidad+"-"+contrasenia+"-"+edad+"-"+correo+"-"+genero+"-"+enlace);}
+    if (true){
+        Log.e("error","INSERTAMOS EN LA BASE");
+    new ConexionBD().execute("usu","i",nombre+"-"+numero+"-"+localidad+"-"+contrasenia+"-"+edad+"-"+correo+"-"+genero+"-"+enlace);
+    onBackPressed();}
 
 
 }
@@ -213,5 +236,27 @@ public void resgistrar(View v){
         return null;
     }
 
+    public void inicio(View v){
+        relativo.setVisibility(View.GONE);
+        inicio.setVisibility(View.VISIBLE);
+    }
+    public void resgistro(View v){
+        relativo.setVisibility(View.GONE);
+        registro.setVisibility(View.VISIBLE);
+    }
 
+    public void iniciarSesion(View v){
+        Boolean hacer=true;
+         if (hacer){
+            try {
+
+                new ConexionBD().execute("usu","e",txtIniCorreo.getText().toString()+"-"+txtIniPass.getText().toString()).get();
+                Toast.makeText(this,"Iniciando", Toast.LENGTH_LONG).show();
+                onBackPressed();
+            }catch (Exception e){
+
+            }
+        }
+
+    }
 }

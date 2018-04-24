@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.util.Log;
+import android.view.Display;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -18,7 +19,12 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.ViewGroup;
+import android.view.Window;
+import android.view.WindowManager;
+import android.widget.Toast;
 
+import java.io.OutputStreamWriter;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
@@ -27,32 +33,22 @@ import java.sql.Statement;
 import java.util.Vector;
 import java.util.concurrent.ExecutionException;
 
-public class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener {
+public class MainActivity extends AppCompatActivity  implements NavigationView.OnNavigationItemSelectedListener {
+
+    static Vector<String> infoSesion=new Vector<String>();
+
+    Window ventanaPrincipal=getWindow();
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-
-
-
-
-        new ConexionBD().execute("I","Pre","Pablo.-Pablo.");
-
-
         Toolbar toolbar=(Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        FloatingActionButton fab=(FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
 
         DrawerLayout drawer=(DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle=new ActionBarDrawerToggle(
@@ -62,6 +58,21 @@ public class MainActivity extends AppCompatActivity
 
         NavigationView navigationView=(NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+
+
+    }
+
+    @Override
+    public void onStart(){
+        super.onStart();
+        if (infoSesion.size()>0){
+            guardar();
+        }else{
+            Toast.makeText(this,"Error que ni cristo sabe cual es", Toast.LENGTH_LONG).show();
+
+        }
+
+
     }
 
     @Override
@@ -93,7 +104,7 @@ public class MainActivity extends AppCompatActivity
         return super.onOptionsItemSelected(item);
     }
 
-    @SuppressWarnings("StatementWithEmptyBody")
+
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
         // Handle navigation view item clicks here.
@@ -120,10 +131,36 @@ public class MainActivity extends AppCompatActivity
     }
 
 
+    public void guardar(){
+        try {
+            OutputStreamWriter fout= new OutputStreamWriter(openFileOutput("sesion.txt", Context.MODE_PRIVATE));
+            for (int x=0;x<infoSesion.size();x++){
+                fout.write(infoSesion.elementAt(x));
+            }
+            fout.close();
+        }
+        catch (Exception ex)
+        {
+            Log.e("Ficheros", "Error al escribir fichero a memoria interna");
+        }
+    }
+
+
+
 }
 
-class ConexionBD extends AsyncTask<String,String,Vector<String>>{
+//-------------------------------------------------------------------------------------------------------------------------------------
 
+class ConexionBD extends AsyncTask<String,String,Vector<String>> {
+    public Vector<String> getSalida() {
+        return salida;
+    }
+
+    public void setSalida(Vector<String> salida) {
+        this.salida = salida;
+    }
+
+    Vector<String> salida;
     public ConexionBD() {
         super();
     }
@@ -135,10 +172,25 @@ class ConexionBD extends AsyncTask<String,String,Vector<String>>{
 
     @Override
     protected Vector<String> doInBackground(String... strings) {
-        String[] x=strings[2].split("-");
-        Boolean inicio=iniciarPersona(x[0], x[1]);
+        Vector<String> a=new Vector<String>();
+        if (strings[0].equals("usu")){
+            if (strings[1].equals("i")){
+                String[] informacion=strings[2].split("-");
+                insertarPersonas(informacion[0],informacion[1],informacion[2],informacion[3],informacion[4],informacion[5],informacion[6],informacion[7]);
+            }
+            if (strings[1].equals("e")){
+                String[] informacion=strings[2].split("-");
+                Boolean boo=iniciarPersona(informacion[0],informacion[1]);
+                Log.e("---------------","EL TAMAÑO ES :"+boo);
+                if (boo){
+                    a.add("inicio");
+                }else {
+                    a.add("error");
+                }
 
-        return new Vector<String>();
+            }
+        }
+        return a;
     }
 
     @Override
@@ -148,7 +200,7 @@ class ConexionBD extends AsyncTask<String,String,Vector<String>>{
 
     @Override
     protected void onPostExecute(Vector<String> strings) {
-
+          setSalida(strings);
     }
 
     @Override
@@ -221,11 +273,19 @@ class ConexionBD extends AsyncTask<String,String,Vector<String>>{
         try {
 
             Statement st=con.createStatement();
-            ResultSet s=st.executeQuery("select contrasenia from usuarios where nickPersona='"+nickInstagram+"'");
+            ResultSet s=st.executeQuery("select contrasenia from usuarios where nickInstagram='"+nickInstagram+"'");
 
-            String pass=s.getString(0);
+            s.next();
+            String pass=s.getString(1);
 
             if (password.equals(pass)){
+                ResultSet resultado=st.executeQuery("select * from usuarios where nickInstagram='"+nickInstagram+"'");
+                String[] extractor={resultado.getString(1),resultado.getString(2),resultado.getString(3),resultado.getString(4),
+                        resultado.getString(5),resultado.getString(6),resultado.getString(7)};
+
+                for (int x=0;x<extractor.length;x++)
+                    MainActivity.infoSesion.addElement(extractor[x]);
+
                 con.close();
                 return true;
             }else{
@@ -235,11 +295,7 @@ class ConexionBD extends AsyncTask<String,String,Vector<String>>{
 
         }
         catch(Exception e) {
-            try {
-                con.close();
-            } catch (SQLException e1) {
-                e1.printStackTrace();
-            }
+
             return false;
         }
     }
