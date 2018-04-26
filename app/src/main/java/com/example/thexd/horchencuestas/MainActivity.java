@@ -178,6 +178,15 @@ public class MainActivity extends conexion  implements NavigationView.OnNavigati
     }
 
 
+    public void votador(View v){
+        btnHacerVotacion.setEnabled(true);
+
+    }
+
+    public void hacerVotacion(View v){
+        btnHacerVotacion.setEnabled(false);
+        btnSiguiente.setEnabled(true);
+    }
 
     //---------------------------------------BD-------------------------------------
 
@@ -374,11 +383,32 @@ public class MainActivity extends conexion  implements NavigationView.OnNavigati
                             btnrespuesta2.setText(respuestaDev2);
                             btnrespuesta3.setText(respuestaDev3);
                             btnrespuesta4.setText(respuestaDev4);
+
+                            if (respuestaDev1.equals("---"))
+                                btnrespuesta1.setEnabled(false);
+                            else
+                                btnrespuesta1.setEnabled(true);
+
+                            if (respuestaDev2.equals("---"))
+                                btnrespuesta2.setEnabled(false);
+                            else
+                                btnrespuesta2.setEnabled(true);
+
+                            if (respuestaDev3.equals("---"))
+                                btnrespuesta3.setEnabled(false);
+                            else
+                                btnrespuesta3.setEnabled(true);
+
+                            if (respuestaDev4.equals("---"))
+                                btnrespuesta4.setEnabled(false);
+                            else
+                                btnrespuesta4.setEnabled(true);
+
                         }
                     }
             );
 
-
+            btnSiguiente.setEnabled(false);
             con.close();
         }
         catch(Exception e) { Log.e("extraxctorpregunta()"," error:" +e.getMessage());
