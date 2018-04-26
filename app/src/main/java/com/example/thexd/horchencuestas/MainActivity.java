@@ -1,11 +1,13 @@
 package com.example.thexd.horchencuestas;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.util.Log;
@@ -22,8 +24,12 @@ import android.view.MenuItem;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.Button;
+import android.widget.TextView;
 import android.widget.Toast;
 
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -33,12 +39,20 @@ import java.sql.Statement;
 import java.util.Vector;
 import java.util.concurrent.ExecutionException;
 
-public class MainActivity extends AppCompatActivity  implements NavigationView.OnNavigationItemSelectedListener {
+public class MainActivity extends conexion  implements NavigationView.OnNavigationItemSelectedListener {
 
     static Vector<String> infoSesion=new Vector<String>();
 
-    Window ventanaPrincipal=getWindow();
+    TextView pregunta;
 
+    Button btnrespuesta1;
+    Button btnrespuesta2;
+    Button btnrespuesta3;
+    Button btnrespuesta4;
+
+    Button btnHacerVotacion;
+    Button btnSiguiente;
+    final Handler comunicadorConUI = new Handler();
 
 
     @Override
@@ -59,17 +73,50 @@ public class MainActivity extends AppCompatActivity  implements NavigationView.O
         NavigationView navigationView=(NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
+        inicializador();
+    }
+    public void inicializador(){
+        pregunta=(TextView) findViewById(R.id.txtrPregunta);
+
+        btnrespuesta1=(Button) findViewById(R.id.btnRepsuesta1);
+        btnrespuesta2=(Button) findViewById(R.id.btnrespuesta2);
+        btnrespuesta3=(Button) findViewById(R.id.btnRespuesta3);
+        btnrespuesta4=(Button) findViewById(R.id.btnRespuesta4);
+
+        btnHacerVotacion=(Button) findViewById(R.id.btnHacerVotacion);
+        btnSiguiente=(Button) findViewById(R.id.btnSiguientesEncu);
 
     }
 
     @Override
     public void onStart(){
         super.onStart();
-        if (infoSesion.size()>0){
-            guardar();
-        }else{
-            Toast.makeText(this,"Error que ni cristo sabe cual es", Toast.LENGTH_LONG).show();
+        Boolean existeArchivo=false;
+        String textazo="";
 
+        try  {
+            BufferedReader fin =new BufferedReader(new InputStreamReader(openFileInput("sesion.txt")));
+
+            textazo = fin.readLine();
+
+            fin.close();
+            existeArchivo=true;
+        }
+        catch (Exception ex)  {
+            existeArchivo=false;
+            Log.e("Ficheros", "Error al leer fichero desde memoria interna");
+        }
+
+
+        if (existeArchivo){
+            String[] informacion=textazo.split("-");
+            Toast.makeText(this,"Inicio sesion "+informacion[0], Toast.LENGTH_LONG).show();
+
+            tareaDB.execute("pre","select",informacion[0]);
+
+
+        }else{
+            Toast.makeText(this,"No se inicio sesion ", Toast.LENGTH_LONG).show();
         }
 
 
@@ -131,83 +178,57 @@ public class MainActivity extends AppCompatActivity  implements NavigationView.O
     }
 
 
-    public void guardar(){
-        try {
-            OutputStreamWriter fout= new OutputStreamWriter(openFileOutput("sesion.txt", Context.MODE_PRIVATE));
-            for (int x=0;x<infoSesion.size();x++){
-                fout.write(infoSesion.elementAt(x));
-            }
-            fout.close();
+
+    //---------------------------------------BD-------------------------------------
+
+    String[] extractor=null;
+
+
+
+    @SuppressLint("StaticFieldLeak")
+    AsyncTask<String,String,Vector<String>> tareaDB=new AsyncTask<String, String, Vector<String>>() {
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
         }
-        catch (Exception ex)
-        {
-            Log.e("Ficheros", "Error al escribir fichero a memoria interna");
-        }
-    }
 
-
-
-}
-
-//-------------------------------------------------------------------------------------------------------------------------------------
-
-class ConexionBD extends AsyncTask<String,String,Vector<String>> {
-    public Vector<String> getSalida() {
-        return salida;
-    }
-
-    public void setSalida(Vector<String> salida) {
-        this.salida = salida;
-    }
-
-    Vector<String> salida;
-    public ConexionBD() {
-        super();
-    }
-
-    @Override
-    protected void onPreExecute() {
-        super.onPreExecute();
-    }
-
-    @Override
-    protected Vector<String> doInBackground(String... strings) {
-        Vector<String> a=new Vector<String>();
-        if (strings[0].equals("usu")){
-            if (strings[1].equals("i")){
-                String[] informacion=strings[2].split("-");
-                insertarPersonas(informacion[0],informacion[1],informacion[2],informacion[3],informacion[4],informacion[5],informacion[6],informacion[7]);
-            }
-            if (strings[1].equals("e")){
-                String[] informacion=strings[2].split("-");
-                Boolean boo=iniciarPersona(informacion[0],informacion[1]);
-                Log.e("---------------","EL TAMAÑO ES :"+boo);
-                if (boo){
-                    a.add("inicio");
-                }else {
-                    a.add("error");
+        @Override
+        protected Vector<String> doInBackground(String... strings) {
+            Vector<String> a=new Vector<String>();
+            if (strings[0].equals("usu")){
+                if (strings[1].equals("i")){
+                    String[] informacion=strings[2].split("-");
+                    insertarPersonas(informacion[0],informacion[1],informacion[2],informacion[3],informacion[4],informacion[5],informacion[6],informacion[7]);
                 }
-
+                if (strings[1].equals("e")){
+                    String[] informacion=strings[2].split("-");
+                    iniciarPersona(informacion[0],informacion[1]);
+                }
             }
+            if (strings[0].equals("pre")){
+                if (strings[1].equals("select")){
+                    extractorPregunta(strings[2]);
+                }
+            }
+            return a;
         }
-        return a;
-    }
 
-    @Override
-    protected void onProgressUpdate(String... values) {
-        super.onProgressUpdate(values);
-    }
+        @Override
+        protected void onProgressUpdate(String... values) {
+            super.onProgressUpdate(values);
+        }
 
-    @Override
-    protected void onPostExecute(Vector<String> strings) {
-          setSalida(strings);
-    }
+        @Override
+        protected void onPostExecute(Vector<String> strings) {
 
-    @Override
-    protected void onCancelled() {
-        super.onCancelled();
-    }
+        }
 
+        @Override
+        protected void onCancelled() {
+            super.onCancelled();
+        }
+
+    };
 
     public void insertarPregunta(String preguntas,String respuestas){
         try {
@@ -279,14 +300,15 @@ class ConexionBD extends AsyncTask<String,String,Vector<String>> {
             String pass=s.getString(1);
 
             if (password.equals(pass)){
+
                 ResultSet resultado=st.executeQuery("select * from usuarios where nickInstagram='"+nickInstagram+"'");
-                String[] extractor={resultado.getString(1),resultado.getString(2),resultado.getString(3),resultado.getString(4),
+                resultado.first();
+                String[] extrar={resultado.getString(1),resultado.getString(2),resultado.getString(3),resultado.getString(4),
                         resultado.getString(5),resultado.getString(6),resultado.getString(7)};
-
-                for (int x=0;x<extractor.length;x++)
-                    MainActivity.infoSesion.addElement(extractor[x]);
-
+                extractor=extrar;
+                Log.e("IniciarPersonas()","si es igual el :"+password+"("+password.length()+") con la mierda de "+pass+"("+pass.length()+")");
                 con.close();
+                guardar();
                 return true;
             }else{
                 con.close();
@@ -295,6 +317,7 @@ class ConexionBD extends AsyncTask<String,String,Vector<String>> {
 
         }
         catch(Exception e) {
+            Log.e("IniciarPersonas()","Nos vamos a al excepcion-"+e.getMessage());
 
             return false;
         }
@@ -305,11 +328,61 @@ class ConexionBD extends AsyncTask<String,String,Vector<String>> {
         try {
             Connection con=ConexionBD();
             Statement st=con.createStatement();
-            st.executeQuery("select idPreguntas from preguntas where idPreguntas not in (select preguntas_idPreguntasFK from respuestas where idRespuestas in (select respuestas_idRespuestas from usuarios_respuestaNM where usuarios_idUsuarios="+nickPersona+"))");
+            ResultSet rs=st.executeQuery("select idPreguntas from preguntas where idPreguntas not in (select preguntas_idPreguntasFK from respuestas where idRespuestas in (select respuestas_idRespuestas from usuarios_respuestaNM where usuarios_idUsuarios='"+nickPersona+"')) limit 1");
+            rs.first();
+            String id=rs.getString(1);
+
+            rs=st.executeQuery("select preguntas from preguntas where idPreguntas="+id);
+            rs.first();
+            final String cuestion=rs.getString(1);
+
+
+            rs=st.executeQuery("select respuestas from respuestas where preguntas_idPreguntasFK="+id);
+            rs.first();
+
+            String respuesta1;String respuesta2;String respuesta3;String respuesta4;
+            try{
+                respuesta1 = rs.getString(1);
+                rs.next();}catch (Exception e){respuesta1="---";}
+
+            try{
+                respuesta2 = rs.getString(1);
+                rs.next();}catch (Exception e){respuesta2="---";}
+
+            try{
+                respuesta3 = rs.getString(1);
+                rs.next();}catch (Exception e){respuesta3="---";}
+
+            try{
+                respuesta4 = rs.getString(1);
+                }catch (Exception e){respuesta4="---";}
+
+            final String respuestaDev1=respuesta1;
+            final String respuestaDev2=respuesta2;
+            final String respuestaDev3=respuesta3;
+            final String respuestaDev4=respuesta4;
+
+
+
+
+            comunicadorConUI.post(
+                    new Runnable() {
+                        @Override
+                        public void run() {
+                            pregunta.setText(" Pregunta: "+ cuestion);
+                            btnrespuesta1.setText(respuestaDev1);
+                            btnrespuesta2.setText(respuestaDev2);
+                            btnrespuesta3.setText(respuestaDev3);
+                            btnrespuesta4.setText(respuestaDev4);
+                        }
+                    }
+            );
+
 
             con.close();
         }
-        catch(Exception e) {}
+        catch(Exception e) { Log.e("extraxctorpregunta()"," error:" +e.getMessage());
+        }
 
         return "";
     }
@@ -318,12 +391,37 @@ class ConexionBD extends AsyncTask<String,String,Vector<String>> {
         Connection con=null;
         try {
             Class.forName("com.mysql.jdbc.Driver");
-            con=DriverManager.getConnection("jdbc:mysql://sql2.freesqldatabase.com:3306/sql2233658", "sql2233658", "uK4*dD2%");
+            con= DriverManager.getConnection("jdbc:mysql://sql2.freesqldatabase.com:3306/sql2233658", "sql2233658", "uK4*dD2%");
 
         } catch(Exception e) {
-                e.printStackTrace();
+            e.printStackTrace();
 
-            }
+        }
         return con;
     }
+
+
+
+
+    //  OPCIONALLLLL
+    public void guardar(){
+        Log.e("Ficheros", "Escribiendo...");
+
+        try {
+            OutputStreamWriter fout= new OutputStreamWriter(openFileOutput("sesion.txt", Context.MODE_PRIVATE));
+            for (int x=0;x<extractor.length;x++){
+                fout.write(extractor[x]+"-");
+
+            }
+            fout.close();
+        }
+        catch (Exception ex)
+        {
+            Log.e("Ficheros", "Error al escribir fichero a memoria interna");
+
+        }
+    }
+
+
 }
+

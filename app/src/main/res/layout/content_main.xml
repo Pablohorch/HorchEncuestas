@@ -31,13 +31,13 @@
                 android:orientation="horizontal">
 
                 <Button
-                    android:id="@+id/button3"
+                    android:id="@+id/btnRepsuesta1"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_weight="1" />
 
                 <Button
-                    android:id="@+id/button4"
+                    android:id="@+id/btnrespuesta2"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_weight="1" />
@@ -49,13 +49,13 @@
                 android:orientation="horizontal">
 
                 <Button
-                    android:id="@+id/button5"
+                    android:id="@+id/btnRespuesta3"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_weight="1" />
 
                 <Button
-                    android:id="@+id/button6"
+                    android:id="@+id/btnRespuesta4"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_weight="1" />
