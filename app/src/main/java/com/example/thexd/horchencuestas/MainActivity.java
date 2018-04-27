@@ -3,6 +3,7 @@ package com.example.thexd.horchencuestas;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
@@ -10,6 +11,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.text.style.BackgroundColorSpan;
 import android.util.Log;
 import android.view.Display;
 import android.view.View;
@@ -39,6 +41,8 @@ import java.sql.Statement;
 import java.util.Vector;
 import java.util.concurrent.ExecutionException;
 
+import static android.graphics.Color.*;
+
 public class MainActivity extends conexion  implements NavigationView.OnNavigationItemSelectedListener {
 
     static Vector<String> infoSesion=new Vector<String>();
@@ -53,6 +57,25 @@ public class MainActivity extends conexion  implements NavigationView.OnNavigati
     Button btnHacerVotacion;
     Button btnSiguiente;
     final Handler comunicadorConUI = new Handler();
+
+    String idRespuesta1="";
+    String idRespuesta2="";
+    String idRespuesta3="";
+    String idRespuesta4="";
+
+    String idelegido="";
+    String idPregunta="";
+    String usuario="";
+
+    BackgroundColorSpan clrSeleccion =new BackgroundColorSpan(Color.RED);
+    BackgroundColorSpan clrEstandar =new BackgroundColorSpan(Color.WHITE);
+
+    TextView txtRes1;
+    TextView txtRes2;
+    TextView txtRes3;
+    TextView txtRes4;
+
+
 
 
     @Override
@@ -83,6 +106,16 @@ public class MainActivity extends conexion  implements NavigationView.OnNavigati
         btnrespuesta3=(Button) findViewById(R.id.btnRespuesta3);
         btnrespuesta4=(Button) findViewById(R.id.btnRespuesta4);
 
+        btnrespuesta1.setBackgroundColor(clrEstandar.getBackgroundColor());
+        btnrespuesta1.setTransitionName("res1");
+        btnrespuesta2.setBackgroundColor(clrEstandar.getBackgroundColor());
+        btnrespuesta2.setTransitionName("res2");
+        btnrespuesta3.setBackgroundColor(clrEstandar.getBackgroundColor());
+        btnrespuesta3.setTransitionName("res3");
+        btnrespuesta4.setBackgroundColor(clrEstandar.getBackgroundColor());
+        btnrespuesta4.setTransitionName("res4");
+
+
         btnHacerVotacion=(Button) findViewById(R.id.btnHacerVotacion);
         btnSiguiente=(Button) findViewById(R.id.btnSiguientesEncu);
 
@@ -96,7 +129,6 @@ public class MainActivity extends conexion  implements NavigationView.OnNavigati
 
         try  {
             BufferedReader fin =new BufferedReader(new InputStreamReader(openFileInput("sesion.txt")));
-
             textazo = fin.readLine();
 
             fin.close();
@@ -111,7 +143,7 @@ public class MainActivity extends conexion  implements NavigationView.OnNavigati
         if (existeArchivo){
             String[] informacion=textazo.split("-");
             Toast.makeText(this,"Inicio sesion "+informacion[0], Toast.LENGTH_LONG).show();
-
+            usuario=informacion[0];
             tareaDB.execute("pre","select",informacion[0]);
 
 
@@ -184,8 +216,36 @@ public class MainActivity extends conexion  implements NavigationView.OnNavigati
     }
 
     public void hacerVotacion(View v){
+        btnrespuesta1.setBackgroundColor(clrEstandar.getBackgroundColor());
+        btnrespuesta2.setBackgroundColor(clrEstandar.getBackgroundColor());
+        btnrespuesta3.setBackgroundColor(clrEstandar.getBackgroundColor());
+        btnrespuesta4.setBackgroundColor(clrEstandar.getBackgroundColor());
+
+
+
+        btnHacerVotacion.setEnabled(true);
+        btnSiguiente.setEnabled(false);
+    Button btn=(Button) v;
+    btn.setBackgroundColor(clrSeleccion.getBackgroundColor());
+        if (btn.getTransitionName().equals("res1"))
+            idelegido=idRespuesta1;
+        if (btn.getTransitionName().equals("res2"))
+            idelegido=idRespuesta2;
+        if (btn.getTransitionName().equals("res3"))
+            idelegido=idRespuesta3;
+        if (btn.getTransitionName().equals("res4"))
+            idelegido=idRespuesta4;
+
+setTitle(idelegido);
+    }
+
+    public void votarPregunta(View v){
         btnHacerVotacion.setEnabled(false);
         btnSiguiente.setEnabled(true);
+        tareaDBResponde.execute("pre","insertRes",usuario+"-"+idelegido);
+
+
+
     }
 
     //---------------------------------------BD-------------------------------------
@@ -193,16 +253,17 @@ public class MainActivity extends conexion  implements NavigationView.OnNavigati
     String[] extractor=null;
 
 
-
     @SuppressLint("StaticFieldLeak")
-    AsyncTask<String,String,Vector<String>> tareaDB=new AsyncTask<String, String, Vector<String>>() {
+    AsyncTask<String,String,Vector<String>> tareaDBResponde=new AsyncTask<String, String, Vector<String>>() {
         @Override
+
         protected void onPreExecute() {
             super.onPreExecute();
         }
 
         @Override
         protected Vector<String> doInBackground(String... strings) {
+
             Vector<String> a=new Vector<String>();
             if (strings[0].equals("usu")){
                 if (strings[1].equals("i")){
@@ -217,6 +278,63 @@ public class MainActivity extends conexion  implements NavigationView.OnNavigati
             if (strings[0].equals("pre")){
                 if (strings[1].equals("select")){
                     extractorPregunta(strings[2]);
+                }
+                if (strings[1].equals("insertRes")){
+                    //responder pregunta
+                    String[] informacion=strings[2].split("-");
+                    PersonaResponde(informacion[0],informacion[1]);
+                }
+            }
+            return a;
+        }
+
+        @Override
+        protected void onProgressUpdate(String... values) {
+            super.onProgressUpdate(values);
+        }
+
+        @Override
+        protected void onPostExecute(Vector<String> strings) {
+
+        }
+
+        @Override
+        protected void onCancelled() {
+            super.onCancelled();
+        }
+
+    };
+
+    @SuppressLint("StaticFieldLeak")
+    AsyncTask<String,String,Vector<String>> tareaDB=new AsyncTask<String, String, Vector<String>>() {
+        @Override
+
+        protected void onPreExecute() {
+            super.onPreExecute();
+        }
+
+        @Override
+        protected Vector<String> doInBackground(String... strings) {
+
+            Vector<String> a=new Vector<String>();
+            if (strings[0].equals("usu")){
+                if (strings[1].equals("i")){
+                    String[] informacion=strings[2].split("-");
+                    insertarPersonas(informacion[0],informacion[1],informacion[2],informacion[3],informacion[4],informacion[5],informacion[6],informacion[7]);
+                }
+                if (strings[1].equals("e")){
+                    String[] informacion=strings[2].split("-");
+                    iniciarPersona(informacion[0],informacion[1]);
+                }
+            }
+            if (strings[0].equals("pre")){
+                if (strings[1].equals("select")){
+                    extractorPregunta(strings[2]);
+                }
+                if (strings[1].equals("insertRes")){
+                    //responder pregunta
+                    String[] informacion=strings[2].split("-");
+                    PersonaResponde(informacion[0],informacion[1]);
                 }
             }
             return a;
@@ -289,13 +407,9 @@ public class MainActivity extends conexion  implements NavigationView.OnNavigati
         try {
             Connection con=ConexionBD();
             Statement st=con.createStatement();
-            st.executeUpdate("insert into usuarios_respuestaNM(usuarios_idUsuarios,respuestas_idRespuestas) values("+nickPersona+","+idRespuesta+")");
+            st.executeUpdate("insert into usuarios_respuestaNM(usuarios_idUsuarios,respuestas_idRespuestas) values('"+nickPersona+"',"+idRespuesta+")");
             con.close();
-        }
-        catch(Exception e) {
-            e.printStackTrace();
-
-        }
+        }catch(Exception e) {}
     }
 
     public Boolean iniciarPersona(String nickInstagram, String password){
@@ -337,7 +451,7 @@ public class MainActivity extends conexion  implements NavigationView.OnNavigati
         try {
             Connection con=ConexionBD();
             Statement st=con.createStatement();
-            ResultSet rs=st.executeQuery("select idPreguntas from preguntas where idPreguntas not in (select preguntas_idPreguntasFK from respuestas where idRespuestas in (select respuestas_idRespuestas from usuarios_respuestaNM where usuarios_idUsuarios='"+nickPersona+"')) limit 1");
+            ResultSet rs=st.executeQuery("select idPreguntas from preguntas where idPreguntas not in (select preguntas_idPreguntasFK from respuestas where idRespuestas in (select respuestas_idRespuestas from usuarios_respuestaNM where usuarios_idUsuarios='"+nickPersona+"')) AND aprobadaPregunta=1 limit 1");
             rs.first();
             String id=rs.getString(1);
 
@@ -346,31 +460,34 @@ public class MainActivity extends conexion  implements NavigationView.OnNavigati
             final String cuestion=rs.getString(1);
 
 
-            rs=st.executeQuery("select respuestas from respuestas where preguntas_idPreguntasFK="+id);
+            rs=st.executeQuery("select respuestas,idRespuestas from respuestas where preguntas_idPreguntasFK="+id);
             rs.first();
 
             String respuesta1;String respuesta2;String respuesta3;String respuesta4;
             try{
                 respuesta1 = rs.getString(1);
+                idRespuesta1=rs.getString(2);
                 rs.next();}catch (Exception e){respuesta1="---";}
 
             try{
                 respuesta2 = rs.getString(1);
+                idRespuesta2=rs.getString(2);
                 rs.next();}catch (Exception e){respuesta2="---";}
 
             try{
                 respuesta3 = rs.getString(1);
+                idRespuesta3=rs.getString(2);
                 rs.next();}catch (Exception e){respuesta3="---";}
 
             try{
                 respuesta4 = rs.getString(1);
-                }catch (Exception e){respuesta4="---";}
+                idRespuesta4=rs.getString(2);
+            }catch (Exception e){respuesta4="---";}
 
             final String respuestaDev1=respuesta1;
             final String respuestaDev2=respuesta2;
             final String respuestaDev3=respuesta3;
             final String respuestaDev4=respuesta4;
-
 
 
 
@@ -411,7 +528,9 @@ public class MainActivity extends conexion  implements NavigationView.OnNavigati
             btnSiguiente.setEnabled(false);
             con.close();
         }
-        catch(Exception e) { Log.e("extraxctorpregunta()"," error:" +e.getMessage());
+        catch(Exception e) {
+
+            Log.e("extraxctorpregunta()"," error:" +e.getMessage());
         }
 
         return "";
@@ -429,7 +548,6 @@ public class MainActivity extends conexion  implements NavigationView.OnNavigati
         }
         return con;
     }
-
 
 
 
