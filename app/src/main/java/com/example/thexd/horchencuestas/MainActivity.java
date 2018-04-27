@@ -27,6 +27,7 @@ import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -56,7 +57,9 @@ public class MainActivity extends conexion  implements NavigationView.OnNavigati
 
     Button btnHacerVotacion;
     Button btnSiguiente;
+
     final Handler comunicadorConUI = new Handler();
+    final Handler comunicadorConUIRespuesta = new Handler();
 
     String idRespuesta1="";
     String idRespuesta2="";
@@ -75,6 +78,17 @@ public class MainActivity extends conexion  implements NavigationView.OnNavigati
     TextView txtRes3;
     TextView txtRes4;
 
+    ProgressBar prbprogress1;
+    ProgressBar prbprogress2;
+    ProgressBar prbprogress3;
+    ProgressBar prbprogress4;
+
+
+    static int votosTotales=0;
+    static int votos1=0;
+    static int votos2=0;
+    static int votos3=0;
+    static int votos4=0;
 
 
 
@@ -119,6 +133,20 @@ public class MainActivity extends conexion  implements NavigationView.OnNavigati
         btnHacerVotacion=(Button) findViewById(R.id.btnHacerVotacion);
         btnSiguiente=(Button) findViewById(R.id.btnSiguientesEncu);
 
+        //Resultado
+
+        txtRes1=(TextView) findViewById(R.id.txtRelUno);
+        txtRes2=(TextView) findViewById(R.id.txtRelUno2);
+        txtRes3=(TextView) findViewById(R.id.txtRelUno3);
+        txtRes4=(TextView) findViewById(R.id.txtRelUno4);
+
+
+        prbprogress1=(ProgressBar) findViewById(R.id.progreRelUno);
+        prbprogress2=(ProgressBar) findViewById(R.id.progreRelUno2);
+        prbprogress3=(ProgressBar) findViewById(R.id.progreRelUno3);
+        prbprogress4=(ProgressBar) findViewById(R.id.progreRelUno4);
+
+
     }
 
     @Override
@@ -126,6 +154,12 @@ public class MainActivity extends conexion  implements NavigationView.OnNavigati
         super.onStart();
         Boolean existeArchivo=false;
         String textazo="";
+
+        try {
+            Thread.sleep(500);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
 
         try  {
             BufferedReader fin =new BufferedReader(new InputStreamReader(openFileInput("sesion.txt")));
@@ -140,17 +174,16 @@ public class MainActivity extends conexion  implements NavigationView.OnNavigati
         }
 
 
+
+
         if (existeArchivo){
             String[] informacion=textazo.split("-");
             Toast.makeText(this,"Inicio sesion "+informacion[0], Toast.LENGTH_LONG).show();
             usuario=informacion[0];
             tareaDB.execute("pre","select",informacion[0]);
-
-
         }else{
             Toast.makeText(this,"No se inicio sesion ", Toast.LENGTH_LONG).show();
         }
-
 
     }
 
@@ -242,10 +275,50 @@ setTitle(idelegido);
     public void votarPregunta(View v){
         btnHacerVotacion.setEnabled(false);
         btnSiguiente.setEnabled(true);
+
+        txtRes1.setText(btnrespuesta1.getText());
+        txtRes2.setText(btnrespuesta2.getText());
+        txtRes3.setText(btnrespuesta3.getText());
+        txtRes4.setText(btnrespuesta4.getText());
+
+
         tareaDBResponde.execute("pre","insertRes",usuario+"-"+idelegido);
 
+    }
+
+    public void siguiente(View v){
+        super.onStart();
+        Boolean existeArchivo=false;
+        String textazo="";
+
+        try {
+            Thread.sleep(500);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        try  {
+            BufferedReader fin =new BufferedReader(new InputStreamReader(openFileInput("sesion.txt")));
+            textazo = fin.readLine();
+
+            fin.close();
+            existeArchivo=true;
+        }
+        catch (Exception ex)  {
+            existeArchivo=false;
+            Log.e("Ficheros", "Error al leer fichero desde memoria interna");
+        }
 
 
+
+        if (existeArchivo){
+            String[] informacion=textazo.split("-");
+            Toast.makeText(this,"Inicio sesion "+informacion[0], Toast.LENGTH_LONG).show();
+            usuario=informacion[0];
+            tareaDB.execute("pre","select",informacion[0]);
+        }else{
+            Toast.makeText(this,"No se inicio sesion ", Toast.LENGTH_LONG).show();
+        }
     }
 
     //---------------------------------------BD-------------------------------------
@@ -408,8 +481,49 @@ setTitle(idelegido);
             Connection con=ConexionBD();
             Statement st=con.createStatement();
             st.executeUpdate("insert into usuarios_respuestaNM(usuarios_idUsuarios,respuestas_idRespuestas) values('"+nickPersona+"',"+idRespuesta+")");
+
+            ResultSet rs=null;
+
+            if (idRespuesta1.equals("")==false) {
+                rs = st.executeQuery("select count(respuestas_idRespuestas) from usuarios_respuestaNM where respuestas_idRespuestas=" + idRespuesta1);
+                rs.first();
+                votos1 = Integer.parseInt(rs.getString(1));
+            }
+            if (idRespuesta2.equals("")==false) {
+                rs = st.executeQuery("select count(respuestas_idRespuestas) from usuarios_respuestaNM where respuestas_idRespuestas=" + idRespuesta2);
+                rs.first();
+                votos2 = Integer.parseInt(rs.getString(1));
+            }
+            if (idRespuesta3.equals("")==false) {
+                rs = st.executeQuery("select count(respuestas_idRespuestas) from usuarios_respuestaNM where respuestas_idRespuestas=" + idRespuesta3);
+                rs.first();
+                votos3 = Integer.parseInt(rs.getString(1));
+            }
+            if (idRespuesta4.equals("")==false) {
+                rs = st.executeQuery("select count(respuestas_idRespuestas) from usuarios_respuestaNM where respuestas_idRespuestas=" + idRespuesta4);
+                rs.first();
+                votos4 = Integer.parseInt(rs.getString(1));
+            }
+            votosTotales=votos1+votos2+votos3+votos4;
+
+            comunicadorConUI.post(new Runnable() {
+                @Override
+                public void run() {
+                    prbprogress1.setMax(votosTotales);
+                    prbprogress2.setMax(votosTotales);
+                    prbprogress3.setMax(votosTotales);
+                    prbprogress4.setMax(votosTotales);
+
+                    prbprogress1.setProgress(votos1);
+                    prbprogress2.setProgress(votos2);
+                    prbprogress3.setProgress(votos3);
+                    prbprogress4.setProgress(votos4);
+
+                }
+            });
+
             con.close();
-        }catch(Exception e) {}
+        }catch(Exception e) {Log.e("error votos",e.getMessage());}
     }
 
     public Boolean iniciarPersona(String nickInstagram, String password){
