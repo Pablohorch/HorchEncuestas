@@ -25,6 +25,7 @@ import android.widget.Spinner;
 import android.widget.Toast;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileOutputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
@@ -39,8 +40,9 @@ import java.util.Scanner;
 import java.util.Vector;
 import java.util.regex.Pattern;
 
-public class registro extends conexion {
+public class reguistro extends AppCompatActivity {
 
+    final Handler comunicadorConUI = new Handler();
 
     //Registro
     Spinner spiGenero;
@@ -65,6 +67,7 @@ public class registro extends conexion {
     EditText txtIniPass;
 
 
+   static Boolean exiteElUsuario=false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -101,81 +104,101 @@ public class registro extends conexion {
         new Thread(){
             @Override
             public void run() {
-              final Boolean existencia=comprobador(txtNick.getText().toString());
+                final Boolean existencia=comprobador(txtNick.getText().toString());
 
 
-             mHandler.post(new Runnable() {
-                  @Override
-                  public void run() {
-                      if (existencia){
+                mHandler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (existencia){
 
-                          final Handler mHandler = new Handler();
-                          new Thread(){
-                              @Override
-                              public void run() {
-                                  final Bitmap existencia=urlImageToBitmap(enlace);
-                                  mHandler.post(new Runnable() {
-                                      @Override
-                                      public void run() {
-                                          fotoPerfil.setImageBitmap(existencia);
-                                      }
-                                  });}}.start();
+                            final Handler mHandler = new Handler();
+                            new Thread(){
+                                @Override
+                                public void run() {
+                                    final Bitmap existencia=urlImageToBitmap(enlace);
+                                    mHandler.post(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            fotoPerfil.setImageBitmap(existencia);
+                                        }
+                                    });}}.start();
 
-                          btnComprobarNick.setText("COMPROBAR - Todo Correcto");
+                            btnComprobarNick.setText("COMPROBAR - Todo Correcto");
 
 
-                      }else {
-                          btnComprobarNick.setText("COMPROBAR - Error, No Existe");
-                      }
+                        }else {
+                            btnComprobarNick.setText("COMPROBAR - Error, No Existe");
+                        }
 
-                  }
-              });
+                    }
+                });
 
             }
         }.start();
     }
 
     public void resgistrar(View v){
-    String nombre=txtNick.getText().toString();
-    String numero=txtNumber.getText().toString();
-    String correo=txtCorreo.getText().toString();
-    String localidad=txtLocalidad.getText().toString();
-    String contrasenia=txtPassword.getText().toString();
-    String edad=txtEdad.getText().toString();
-    String genero;
+        String nombre=txtNick.getText().toString();
+        String numero=txtNumber.getText().toString();
+        String correo=txtCorreo.getText().toString();
+        String localidad=txtLocalidad.getText().toString();
+        String contrasenia=txtPassword.getText().toString();
+        String edad=txtEdad.getText().toString();
+        String genero;
 
-    int x=0;
-    if (btnComprobarNick.getText().toString().contains("CORRECTO")){
-        x++;
+
+
+        int x=0;
+        Log.e("Reguistro","Entra "+x);
+
+        if (btnComprobarNick.getText().toString().contains("CORRECTO")){
+
+            x++;
+            Log.e("Reguistro","Entra "+x);
+
+        }
+        if (numero.length()==9){
+            x++;
+            Log.e("Reguistro","Entra "+x);
+
+        }
+        if (!validarEmail(correo)){
+            txtCorreo.setError("Email no válido");
+        }else{
+            x++;
+            Log.e("Reguistro","Entra "+x);
+
+        }
+        if (localidad.length()>2){
+            x++;
+            Log.e("Reguistro","Entra "+x);
+
+        }
+        if (!(txtEdad.getText().toString().equals(""))){
+            x++;
+            Log.e("Reguistro","Entra "+x);
+
+        }
+        if (!(txtPassword.getText().toString().equals(""))){
+            x++;
+            Log.e("Reguistro","Entra "+x);
+
+        }
+        genero=spiGenero.getSelectedItem().toString();
+
+
+
+        if (x==5){
+
+            tareaDB.execute("usu","i",nombre+"-"+numero+"-"+localidad+"-"+contrasenia+"-"+edad+"-"+correo+"-"+genero+"-"+enlace);
+            onBackPressed();}else{
+            Log.e("Reguistro","Alog anda mal "+x);
+
+        }
+
+
     }
-    if (numero.length()==9){
-        x++;
-    }
-    if (!validarEmail(correo)){
-        txtCorreo.setError("Email no válido");
-    }else{
-        x++;
-    }
-    if (localidad.length()>2){
-        x++;
-    }
-    if (!(txtEdad.getText().toString().equals(""))){
-        x++;
-    }
-    if (!(txtPassword.getText().toString().equals(""))){
-        x++;
-    }
-    genero=spiGenero.getSelectedItem().toString();
-
-
-
-    if (true){
-
-    tareaDB.execute("usu","i",nombre+"-"+numero+"-"+localidad+"-"+contrasenia+"-"+edad+"-"+correo+"-"+genero+"-"+enlace);
-    onBackPressed();}
-
-
-}
     private boolean validarEmail(String email) {
         Pattern pattern = Patterns.EMAIL_ADDRESS;
         return pattern.matcher(email).matches();
@@ -217,9 +240,9 @@ public class registro extends conexion {
                 }
 
             }
-                return true;
+            return true;
 
-            } catch (Exception e) {
+        } catch (Exception e) {
 
             return false;
         }
@@ -253,7 +276,7 @@ public class registro extends conexion {
 
     public void iniciarSesion(View v){
         Boolean hacer=true;
-         if (hacer){
+        if (hacer){
             try {
 
                 tareaDB.execute("usu","e",txtIniCorreo.getText().toString()+"-"+txtIniPass.getText().toString());
@@ -312,6 +335,94 @@ public class registro extends conexion {
         }
 
     };
+    @SuppressLint("StaticFieldLeak")
+    public void executor(String lugar, String modo, String datos){
+        new AsyncTask<String, String, Vector<String>>() {
+            @Override
+
+            protected void onPreExecute() {
+                super.onPreExecute();
+            }
+
+            @Override
+            protected Vector<String> doInBackground(String... strings) {
+
+                Vector<String> a=new Vector<String>();
+                if (strings[0].equals("usu")){
+                    if (strings[1].equals("i")){
+                        String[] informacion=strings[2].split("-");
+                        insertarPersonas(informacion[0],informacion[1],informacion[2],informacion[3],informacion[4],informacion[5],informacion[6],informacion[7]);
+                    }
+                    if (strings[1].equals("e")){
+                        String[] informacion=strings[2].split("-");
+                        iniciarPersona(informacion[0],informacion[1]);
+                    }
+                }
+                if (strings[0].equals("pre")){
+                    if (strings[1].equals("select")){
+                        extractorPregunta(strings[2]);
+                    }
+                    if (strings[1].equals("insertRes")){
+                        //responder pregunta
+                        String[] informacion=strings[2].split("-");
+                        PersonaResponde(informacion[0],informacion[1]);
+                    }
+                }
+                if (strings[0].equals("COMPRO")){
+                    examinador(strings[1]);
+                }
+                return a;
+            }
+
+            @Override
+            protected void onProgressUpdate(String... values) {
+                super.onProgressUpdate(values);
+            }
+
+            @Override
+            protected void onPostExecute(Vector<String> strings) {
+
+            }
+
+            @Override
+            protected void onCancelled() {
+                super.onCancelled();
+            }
+
+        }.execute(lugar,modo,datos);
+    }
+
+    public void examinador(String nick){
+        Connection con=ConexionBD();
+        try {
+            Statement st=con.createStatement();
+            ResultSet s=st.executeQuery("select * from usuarios where nickInstagram='" + nick + "'");
+            s.next();
+
+
+            Log.e("ERORRROROROROR","ENTRsa rn rl eception"+s.getString(1)  );
+
+            con.close();
+            comunicadorConUI.post(new Runnable() {
+                @Override
+                public void run() {
+                    exiteElUsuario=true;
+                }
+            });
+
+        }catch (Exception e){
+            Log.e("ERORRROROROROR","ENTRsa rn rl eception"+e.getMessage()  );
+
+            comunicadorConUI.post(new Runnable() {
+                @Override
+                public void run() {
+                    Log.e("ERORRROROROROR","ENTRsa rn rl eception"  );
+                    exiteElUsuario=false;
+                }
+            });
+
+        }
+        }
 
     public void insertarPregunta(String preguntas,String respuestas){
         try {
@@ -390,8 +501,8 @@ public class registro extends conexion {
                         resultado.getString(5),resultado.getString(6),resultado.getString(7)};
                 extractor=extrar;
                 Log.e("IniciarPersonas()","si es igual el :"+password+"("+password.length()+") con la mierda de "+pass+"("+pass.length()+")");
-                    con.close();
-                   guardar();
+                con.close();
+                guardar();
                 return true;
             }else{
                 con.close();
@@ -433,13 +544,13 @@ public class registro extends conexion {
         return con;
     }
 
-
-
-
     //  OPCIONALLLLL
     public void guardar(){
         Log.e("Ficheros", "Escribiendo...");
 
+
+        File fichero = new File("sesion.txt");
+        fichero.delete();
         try {
             OutputStreamWriter fout= new OutputStreamWriter(openFileOutput("sesion.txt", Context.MODE_PRIVATE));
             for (int x=0;x<extractor.length;x++){

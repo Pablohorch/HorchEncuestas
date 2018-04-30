@@ -11,7 +11,7 @@
         <item
             android:id="@+id/nav_encuesta"
             android:icon="@drawable/ic_menu_gallery"
-            android:title="Encuestas" />
+            android:title="Crear Encuesta" />
         <item
             android:id="@+id/nav_respuesta"
             android:icon="@drawable/ic_menu_slideshow"

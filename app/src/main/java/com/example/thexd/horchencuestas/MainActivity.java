@@ -4,28 +4,19 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.text.style.BackgroundColorSpan;
 import android.util.Log;
-import android.view.Display;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.ViewGroup;
-import android.view.Window;
-import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -37,12 +28,8 @@ import java.io.OutputStreamWriter;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Vector;
-import java.util.concurrent.ExecutionException;
-
-import static android.graphics.Color.*;
 
 public class MainActivity extends conexion  implements NavigationView.OnNavigationItemSelectedListener {
 
@@ -180,7 +167,8 @@ public class MainActivity extends conexion  implements NavigationView.OnNavigati
             String[] informacion=textazo.split("-");
             Toast.makeText(this,"Inicio sesion "+informacion[0], Toast.LENGTH_LONG).show();
             usuario=informacion[0];
-            tareaDB.execute("pre","select",informacion[0]);
+
+           executor("pre","select",informacion[0]);
         }else{
             Toast.makeText(this,"No se inicio sesion ", Toast.LENGTH_LONG).show();
         }
@@ -208,7 +196,6 @@ public class MainActivity extends conexion  implements NavigationView.OnNavigati
 
         int id=item.getItemId();
 
-        //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
             return true;
         }
@@ -223,10 +210,11 @@ public class MainActivity extends conexion  implements NavigationView.OnNavigati
         int id=item.getItemId();
 
         if (id == R.id.nav_sesion) {
-            Intent abrirRegistro=new Intent(this, registro.class);
+            Intent abrirRegistro=new Intent(this, reguistro.class);
             startActivity(abrirRegistro);
         } else if (id == R.id.nav_encuesta) {
-
+            Intent abrirRegistro=new Intent(this, CrearEncuestaActivity.class);
+            startActivity(abrirRegistro);
         } else if (id == R.id.nav_respuesta) {
 
         } else if (id == R.id.nav_modoNochee) {
@@ -254,6 +242,10 @@ public class MainActivity extends conexion  implements NavigationView.OnNavigati
         btnrespuesta3.setBackgroundColor(clrEstandar.getBackgroundColor());
         btnrespuesta4.setBackgroundColor(clrEstandar.getBackgroundColor());
 
+        btnrespuesta1.setEnabled(false);
+        btnrespuesta2.setEnabled(false);
+        btnrespuesta3.setEnabled(false);
+        btnrespuesta4.setEnabled(false);
 
 
         btnHacerVotacion.setEnabled(true);
@@ -269,7 +261,6 @@ public class MainActivity extends conexion  implements NavigationView.OnNavigati
         if (btn.getTransitionName().equals("res4"))
             idelegido=idRespuesta4;
 
-setTitle(idelegido);
     }
 
     public void votarPregunta(View v){
@@ -282,20 +273,26 @@ setTitle(idelegido);
         txtRes4.setText(btnrespuesta4.getText());
 
 
-        tareaDBResponde.execute("pre","insertRes",usuario+"-"+idelegido);
+        executor("pre","insertRes",usuario+"-"+idelegido);
 
     }
 
     public void siguiente(View v){
+
+        btnrespuesta1.setBackgroundColor(clrEstandar.getBackgroundColor());
+        btnrespuesta2.setBackgroundColor(clrEstandar.getBackgroundColor());
+        btnrespuesta3.setBackgroundColor(clrEstandar.getBackgroundColor());
+        btnrespuesta4.setBackgroundColor(clrEstandar.getBackgroundColor());
+
+        btnrespuesta1.setEnabled(true);
+        btnrespuesta2.setEnabled(true);
+        btnrespuesta3.setEnabled(true);
+        btnrespuesta4.setEnabled(true);
+
+
         super.onStart();
         Boolean existeArchivo=false;
         String textazo="";
-
-        try {
-            Thread.sleep(500);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
 
         try  {
             BufferedReader fin =new BufferedReader(new InputStreamReader(openFileInput("sesion.txt")));
@@ -315,7 +312,7 @@ setTitle(idelegido);
             String[] informacion=textazo.split("-");
             Toast.makeText(this,"Inicio sesion "+informacion[0], Toast.LENGTH_LONG).show();
             usuario=informacion[0];
-            tareaDB.execute("pre","select",informacion[0]);
+            executor("pre","select",informacion[0]);
         }else{
             Toast.makeText(this,"No se inicio sesion ", Toast.LENGTH_LONG).show();
         }
@@ -609,7 +606,7 @@ setTitle(idelegido);
                     new Runnable() {
                         @Override
                         public void run() {
-                            pregunta.setText(" Pregunta: "+ cuestion);
+                            pregunta.setText(" Pregunta: "+cuestion);
                             btnrespuesta1.setText(respuestaDev1);
                             btnrespuesta2.setText(respuestaDev2);
                             btnrespuesta3.setText(respuestaDev3);
@@ -634,7 +631,6 @@ setTitle(idelegido);
                                 btnrespuesta4.setEnabled(false);
                             else
                                 btnrespuesta4.setEnabled(true);
-
                         }
                     }
             );
@@ -645,6 +641,36 @@ setTitle(idelegido);
         catch(Exception e) {
 
             Log.e("extraxctorpregunta()"," error:" +e.getMessage());
+
+            if (e.getMessage().contains("empty")){
+                comunicadorConUI.post(
+                        new Runnable() {
+                            @Override
+                            public void run() {
+                                pregunta.setText("No hay preguntas sin responder ahora mismo, Podria crear una nueva encuesta y esperar su aprobación");
+
+                                btnrespuesta1.setBackgroundColor(clrEstandar.getBackgroundColor());
+                                btnrespuesta2.setBackgroundColor(clrEstandar.getBackgroundColor());
+                                btnrespuesta3.setBackgroundColor(clrEstandar.getBackgroundColor());
+                                btnrespuesta4.setBackgroundColor(clrEstandar.getBackgroundColor());
+
+                                btnrespuesta1.setText("---");
+                                btnrespuesta2.setText("---");
+                                btnrespuesta3.setText("---");
+                                btnrespuesta4.setText("---");
+
+                                btnrespuesta1.setEnabled(false);
+                                btnrespuesta2.setEnabled(false);
+                                btnrespuesta3.setEnabled(false);
+                                btnrespuesta4.setEnabled(false);
+
+                            }
+                        }
+                );
+
+
+            }
+
         }
 
         return "";
@@ -684,6 +710,60 @@ setTitle(idelegido);
         }
     }
 
+
+    @SuppressLint("StaticFieldLeak")
+    public void executor(String lugar,String modo, String datos){
+        new AsyncTask<String, String, Vector<String>>() {
+            @Override
+
+            protected void onPreExecute() {
+                super.onPreExecute();
+            }
+
+            @Override
+            protected Vector<String> doInBackground(String... strings) {
+
+                Vector<String> a=new Vector<String>();
+                if (strings[0].equals("usu")){
+                    if (strings[1].equals("i")){
+                        String[] informacion=strings[2].split("-");
+                        insertarPersonas(informacion[0],informacion[1],informacion[2],informacion[3],informacion[4],informacion[5],informacion[6],informacion[7]);
+                    }
+                    if (strings[1].equals("e")){
+                        String[] informacion=strings[2].split("-");
+                        iniciarPersona(informacion[0],informacion[1]);
+                    }
+                }
+                if (strings[0].equals("pre")){
+                    if (strings[1].equals("select")){
+                        extractorPregunta(strings[2]);
+                    }
+                    if (strings[1].equals("insertRes")){
+                        //responder pregunta
+                        String[] informacion=strings[2].split("-");
+                        PersonaResponde(informacion[0],informacion[1]);
+                    }
+                }
+                return a;
+            }
+
+            @Override
+            protected void onProgressUpdate(String... values) {
+                super.onProgressUpdate(values);
+            }
+
+            @Override
+            protected void onPostExecute(Vector<String> strings) {
+
+            }
+
+            @Override
+            protected void onCancelled() {
+                super.onCancelled();
+            }
+
+        }.execute(lugar,modo,datos);
+    }
 
 }
 
