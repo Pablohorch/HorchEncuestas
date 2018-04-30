@@ -242,11 +242,6 @@ public class MainActivity extends conexion  implements NavigationView.OnNavigati
         btnrespuesta3.setBackgroundColor(clrEstandar.getBackgroundColor());
         btnrespuesta4.setBackgroundColor(clrEstandar.getBackgroundColor());
 
-        btnrespuesta1.setEnabled(false);
-        btnrespuesta2.setEnabled(false);
-        btnrespuesta3.setEnabled(false);
-        btnrespuesta4.setEnabled(false);
-
 
         btnHacerVotacion.setEnabled(true);
         btnSiguiente.setEnabled(false);
@@ -266,6 +261,12 @@ public class MainActivity extends conexion  implements NavigationView.OnNavigati
     public void votarPregunta(View v){
         btnHacerVotacion.setEnabled(false);
         btnSiguiente.setEnabled(true);
+        
+        btnrespuesta1.setEnabled(false);
+        btnrespuesta2.setEnabled(false);
+        btnrespuesta3.setEnabled(false);
+        btnrespuesta4.setEnabled(false);
+
 
         txtRes1.setText(btnrespuesta1.getText());
         txtRes2.setText(btnrespuesta2.getText());
