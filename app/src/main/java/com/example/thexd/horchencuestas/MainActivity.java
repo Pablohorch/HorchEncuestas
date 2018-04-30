@@ -157,7 +157,7 @@ public class MainActivity extends conexion  implements NavigationView.OnNavigati
         }
         catch (Exception ex)  {
             existeArchivo=false;
-            Log.e("Ficheros", "Error al leer fichero desde memoria interna");
+
         }
 
 
@@ -303,7 +303,7 @@ public class MainActivity extends conexion  implements NavigationView.OnNavigati
         }
         catch (Exception ex)  {
             existeArchivo=false;
-            Log.e("Ficheros", "Error al leer fichero desde memoria interna");
+
         }
 
 
@@ -520,7 +520,7 @@ public class MainActivity extends conexion  implements NavigationView.OnNavigati
             });
 
             con.close();
-        }catch(Exception e) {Log.e("error votos",e.getMessage());}
+        }catch(Exception e) {}
     }
 
     public Boolean iniciarPersona(String nickInstagram, String password){
@@ -540,7 +540,6 @@ public class MainActivity extends conexion  implements NavigationView.OnNavigati
                 String[] extrar={resultado.getString(1),resultado.getString(2),resultado.getString(3),resultado.getString(4),
                         resultado.getString(5),resultado.getString(6),resultado.getString(7)};
                 extractor=extrar;
-                Log.e("IniciarPersonas()","si es igual el :"+password+"("+password.length()+") con la mierda de "+pass+"("+pass.length()+")");
                 con.close();
                 guardar();
                 return true;
@@ -551,9 +550,7 @@ public class MainActivity extends conexion  implements NavigationView.OnNavigati
 
         }
         catch(Exception e) {
-            Log.e("IniciarPersonas()","Nos vamos a al excepcion-"+e.getMessage());
-
-            return false;
+             return false;
         }
     }
 
@@ -640,8 +637,6 @@ public class MainActivity extends conexion  implements NavigationView.OnNavigati
         }
         catch(Exception e) {
 
-            Log.e("extraxctorpregunta()"," error:" +e.getMessage());
-
             if (e.getMessage().contains("empty")){
                 comunicadorConUI.post(
                         new Runnable() {
@@ -693,7 +688,6 @@ public class MainActivity extends conexion  implements NavigationView.OnNavigati
 
     //  OPCIONALLLLL
     public void guardar(){
-        Log.e("Ficheros", "Escribiendo...");
 
         try {
             OutputStreamWriter fout= new OutputStreamWriter(openFileOutput("sesion.txt", Context.MODE_PRIVATE));
@@ -705,7 +699,6 @@ public class MainActivity extends conexion  implements NavigationView.OnNavigati
         }
         catch (Exception ex)
         {
-            Log.e("Ficheros", "Error al escribir fichero a memoria interna");
 
         }
     }

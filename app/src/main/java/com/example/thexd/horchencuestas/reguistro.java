@@ -150,39 +150,32 @@ public class reguistro extends AppCompatActivity {
 
 
         int x=0;
-        Log.e("Reguistro","Entra "+x);
 
         if (btnComprobarNick.getText().toString().contains("CORRECTO")){
 
             x++;
-            Log.e("Reguistro","Entra "+x);
 
         }
         if (numero.length()==9){
             x++;
-            Log.e("Reguistro","Entra "+x);
 
         }
         if (!validarEmail(correo)){
             txtCorreo.setError("Email no válido");
         }else{
             x++;
-            Log.e("Reguistro","Entra "+x);
 
         }
         if (localidad.length()>2){
             x++;
-            Log.e("Reguistro","Entra "+x);
 
         }
         if (!(txtEdad.getText().toString().equals(""))){
             x++;
-            Log.e("Reguistro","Entra "+x);
 
         }
         if (!(txtPassword.getText().toString().equals(""))){
             x++;
-            Log.e("Reguistro","Entra "+x);
 
         }
         genero=spiGenero.getSelectedItem().toString();
@@ -193,7 +186,6 @@ public class reguistro extends AppCompatActivity {
 
             tareaDB.execute("usu","i",nombre+"-"+numero+"-"+localidad+"-"+contrasenia+"-"+edad+"-"+correo+"-"+genero+"-"+enlace);
             onBackPressed();}else{
-            Log.e("Reguistro","Alog anda mal "+x);
 
         }
 
@@ -400,7 +392,6 @@ public class reguistro extends AppCompatActivity {
             s.next();
 
 
-            Log.e("ERORRROROROROR","ENTRsa rn rl eception"+s.getString(1)  );
 
             con.close();
             comunicadorConUI.post(new Runnable() {
@@ -411,12 +402,9 @@ public class reguistro extends AppCompatActivity {
             });
 
         }catch (Exception e){
-            Log.e("ERORRROROROROR","ENTRsa rn rl eception"+e.getMessage()  );
-
             comunicadorConUI.post(new Runnable() {
                 @Override
                 public void run() {
-                    Log.e("ERORRROROROROR","ENTRsa rn rl eception"  );
                     exiteElUsuario=false;
                 }
             });
@@ -500,7 +488,6 @@ public class reguistro extends AppCompatActivity {
                 String[] extrar={resultado.getString(1),resultado.getString(2),resultado.getString(3),resultado.getString(4),
                         resultado.getString(5),resultado.getString(6),resultado.getString(7)};
                 extractor=extrar;
-                Log.e("IniciarPersonas()","si es igual el :"+password+"("+password.length()+") con la mierda de "+pass+"("+pass.length()+")");
                 con.close();
                 guardar();
                 return true;
@@ -511,7 +498,6 @@ public class reguistro extends AppCompatActivity {
 
         }
         catch(Exception e) {
-            Log.e("IniciarPersonas()","Nos vamos a al excepcion-"+e.getMessage());
 
             return false;
         }
@@ -546,10 +532,7 @@ public class reguistro extends AppCompatActivity {
 
     //  OPCIONALLLLL
     public void guardar(){
-        Log.e("Ficheros", "Escribiendo...");
-
-
-        File fichero = new File("sesion.txt");
+         File fichero = new File("sesion.txt");
         fichero.delete();
         try {
             OutputStreamWriter fout= new OutputStreamWriter(openFileOutput("sesion.txt", Context.MODE_PRIVATE));
@@ -559,11 +542,7 @@ public class reguistro extends AppCompatActivity {
             }
             fout.close();
         }
-        catch (Exception ex)
-        {
-            Log.e("Ficheros", "Error al escribir fichero a memoria interna");
-
-        }
+        catch (Exception ex)   {  }
     }
 
 }

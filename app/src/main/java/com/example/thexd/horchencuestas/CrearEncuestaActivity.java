@@ -50,10 +50,7 @@ public class CrearEncuestaActivity extends AppCompatActivity {
             fin.close();
             inicioSesion=true;
         }
-        catch (Exception ex)  {
-
-            Log.e("Ficheros-InsertarPre", "Error al leer fichero desde memoria interna");
-        }
+        catch (Exception ex)  { }
         if(inicioSesion){
 
             String pre=pregunta.getText().toString();
