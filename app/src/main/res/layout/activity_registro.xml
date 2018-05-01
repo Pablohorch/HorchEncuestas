@@ -5,7 +5,7 @@
     android:id="@+id/txtInicioCorreo"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".reguistro">
+    tools:context="horch.ejemplo.thexd.horchencuestas.reguistro">
 
     <RelativeLayout
         android:id="@+id/relativoCuenta"
@@ -30,7 +30,7 @@
             android:layout_centerHorizontal="true"
             android:layout_marginBottom="184dp"
             android:onClick="resgistro"
-            android:text="Resgistrase" />
+            android:text="Registrarse" />
 
         <TextView
             android:id="@+id/textView7"
@@ -59,15 +59,14 @@
                 android:id="@+id/lblIniCorreo"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Correo Electronico" />
+                android:text="Nombre Instagram" />
 
             <EditText
                 android:id="@+id/txtInicioNick"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:ems="10"
-                android:inputType="textPersonName"
-                android:text="pablohorch" />
+                android:inputType="textPersonName" />
 
             <TextView
                 android:layout_width="match_parent"
@@ -85,8 +84,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:ems="10"
-                android:inputType="textPassword"
-                android:text="Pablo." />
+                android:inputType="textPassword" />
 
             <TextView
                 android:id="@+id/textView6"
@@ -168,7 +166,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:onClick="clicComprobar"
-                android:text="Comprobar" />
+                android:text="Comprobar (Pulsar ante de reguistrar)" />
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -323,7 +321,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:onClick="resgistrar"
-                android:text="REGISTRAR" />
+                android:text="Registrar" />
 
         </LinearLayout>
     </ScrollView>

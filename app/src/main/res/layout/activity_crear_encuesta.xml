@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".CrearEncuestaActivity">
+    tools:context="horch.ejemplo.thexd.horchencuestas.CrearEncuestaActivity">
 
     <ScrollView
         android:layout_width="match_parent"
@@ -109,7 +109,7 @@
                 android:layout_height="wrap_content"
                 android:layout_margin="20dp"
                 android:onClick="click"
-                android:text="EnviarPregunta" />
+                android:text="Enviar Pregunta" />
         </LinearLayout>
     </ScrollView>
 

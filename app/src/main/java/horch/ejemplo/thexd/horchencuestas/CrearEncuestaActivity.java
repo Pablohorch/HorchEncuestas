@@ -1,21 +1,18 @@
-package com.example.thexd.horchencuestas;
+package horch.ejemplo.thexd.horchencuestas;
 
 import android.annotation.SuppressLint;
-import android.content.Context;
 import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
 
+
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
 import java.sql.Connection;
 import java.sql.DriverManager;
-import java.sql.ResultSet;
 import java.sql.Statement;
 import java.util.Vector;
 
@@ -28,6 +25,7 @@ public class CrearEncuestaActivity extends AppCompatActivity {
     EditText res4;
 
 
+    String[] textazo;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -47,6 +45,7 @@ public class CrearEncuestaActivity extends AppCompatActivity {
 
         try  {
             BufferedReader fin =new BufferedReader(new InputStreamReader(openFileInput("sesion.txt")));
+            textazo = fin.readLine().split("-");
             fin.close();
             inicioSesion=true;
         }
@@ -68,7 +67,7 @@ public class CrearEncuestaActivity extends AppCompatActivity {
                 }
             }
 
-            executor("pre","crear",pre+"/"+total.substring(0,total.length()-2));
+            executor("pre","crear",pre+"/"+total.substring(0,total.length()-1));
         }else{
             Toast.makeText(this,"No puede registrar una pregunta sin tener cuenta ", Toast.LENGTH_LONG).show();
 
@@ -122,7 +121,7 @@ public class CrearEncuestaActivity extends AppCompatActivity {
         try {
             Connection con=ConexionBD();
             Statement st=con.createStatement();
-            st.executeUpdate("insert into preguntas(preguntas,aprobadaPregunta) values('"+preguntas+"',false)");
+            st.executeUpdate("insert into preguntas(preguntas,aprobadaPregunta,autor) values('"+preguntas+"',false,'"+textazo[0]+"')");
             con.close();
 
             String[] respu=respuestas.split("-");

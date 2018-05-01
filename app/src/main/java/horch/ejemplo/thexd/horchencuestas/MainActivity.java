@@ -1,4 +1,4 @@
-package com.example.thexd.horchencuestas;
+package horch.ejemplo.thexd.horchencuestas;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
@@ -8,7 +8,6 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.text.style.BackgroundColorSpan;
-import android.util.Log;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -21,6 +20,7 @@ import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
+
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
@@ -161,8 +161,6 @@ public class MainActivity extends conexion  implements NavigationView.OnNavigati
         }
 
 
-
-
         if (existeArchivo){
             String[] informacion=textazo.split("-");
             Toast.makeText(this,"Inicio sesion "+informacion[0], Toast.LENGTH_LONG).show();
@@ -170,7 +168,7 @@ public class MainActivity extends conexion  implements NavigationView.OnNavigati
 
            executor("pre","select",informacion[0]);
         }else{
-            Toast.makeText(this,"No se inicio sesion ", Toast.LENGTH_LONG).show();
+            Toast.makeText(this,"Esperando ha iniciar Sesion (Si ya lo hizo pruebe en clicar en Siguiente) ", Toast.LENGTH_LONG).show();
         }
 
     }
@@ -290,6 +288,16 @@ public class MainActivity extends conexion  implements NavigationView.OnNavigati
         btnrespuesta3.setEnabled(true);
         btnrespuesta4.setEnabled(true);
 
+        prbprogress1.setProgress(0);
+        prbprogress2.setProgress(0);
+        prbprogress3.setProgress(0);
+        prbprogress4.setProgress(0);
+
+        txtRes1.setText("---");
+        txtRes2.setText("---");
+        txtRes3.setText("---");
+        txtRes4.setText("---");
+
 
         super.onStart();
         Boolean existeArchivo=false;
@@ -311,11 +319,10 @@ public class MainActivity extends conexion  implements NavigationView.OnNavigati
 
         if (existeArchivo){
             String[] informacion=textazo.split("-");
-            Toast.makeText(this,"Inicio sesion "+informacion[0], Toast.LENGTH_LONG).show();
-            usuario=informacion[0];
+           usuario=informacion[0];
             executor("pre","select",informacion[0]);
         }else{
-            Toast.makeText(this,"No se inicio sesion ", Toast.LENGTH_LONG).show();
+            Toast.makeText(this,"No se inicio sesion", Toast.LENGTH_LONG).show();
         }
     }
 
@@ -564,9 +571,9 @@ public class MainActivity extends conexion  implements NavigationView.OnNavigati
             rs.first();
             String id=rs.getString(1);
 
-            rs=st.executeQuery("select preguntas from preguntas where idPreguntas="+id);
+            rs=st.executeQuery("select preguntas,autor from preguntas where idPreguntas="+id);
             rs.first();
-            final String cuestion=rs.getString(1);
+            final String cuestion=rs.getString(1)+" - " +rs.getString(2);
 
 
             rs=st.executeQuery("select respuestas,idRespuestas from respuestas where preguntas_idPreguntasFK="+id);

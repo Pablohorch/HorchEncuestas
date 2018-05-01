@@ -1,15 +1,6 @@
-package com.example.thexd.horchencuestas;
+package horch.ejemplo.thexd.horchencuestas;
 
-import android.annotation.SuppressLint;
-import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
-
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.ResultSet;
-import java.sql.Statement;
-import java.util.Vector;
 
 public class conexion extends AppCompatActivity {
 

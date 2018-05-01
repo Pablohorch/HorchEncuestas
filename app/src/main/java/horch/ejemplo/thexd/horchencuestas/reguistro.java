@@ -1,20 +1,15 @@
-package com.example.thexd.horchencuestas;
+package horch.ejemplo.thexd.horchencuestas;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Handler;
-import android.support.v4.content.ContextCompat;
-import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.util.Patterns;
 import android.view.View;
-import android.view.Window;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
@@ -24,19 +19,18 @@ import android.widget.ScrollView;
 import android.widget.Spinner;
 import android.widget.Toast;
 
+
+
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.Statement;
-import java.util.Scanner;
 import java.util.Vector;
 import java.util.regex.Pattern;
 
@@ -139,56 +133,56 @@ public class reguistro extends AppCompatActivity {
     }
 
     public void resgistrar(View v){
-        String nombre=txtNick.getText().toString();
-        String numero=txtNumber.getText().toString();
-        String correo=txtCorreo.getText().toString();
-        String localidad=txtLocalidad.getText().toString();
-        String contrasenia=txtPassword.getText().toString();
-        String edad=txtEdad.getText().toString();
-        String genero;
+
+        Toast.makeText(this,btnComprobarNick.getText().toString(), Toast.LENGTH_LONG).show();
+
+        if (btnComprobarNick.getText().toString().contains("Correcto")) {
+            String nombre=txtNick.getText().toString();
+            String numero=txtNumber.getText().toString();
+            String correo=txtCorreo.getText().toString();
+            String localidad=txtLocalidad.getText().toString();
+            String contrasenia=txtPassword.getText().toString();
+            String edad=txtEdad.getText().toString();
+            String genero;
 
 
+            int x=0;
 
-        int x=0;
+            if (btnComprobarNick.getText().toString().contains("Correcto")) {
+                x++;
+            }
+            if (numero.length() == 9) {
+                x++;
 
-        if (btnComprobarNick.getText().toString().contains("CORRECTO")){
+            }
+            if (!validarEmail(correo)) {
+                txtCorreo.setError("Email no válido");
+            } else {
+                x++;
 
-            x++;
+            }
+            if (localidad.length() > 2) {
+                x++;
 
+            }
+            if (!(txtEdad.getText().toString().equals(""))) {
+                x++;
+
+            }
+            if (!(txtPassword.getText().toString().equals(""))) {
+                x++;
+
+            }
+            genero=spiGenero.getSelectedItem().toString();
+
+
+            if (x == 6) {
+
+                tareaDB.execute("usu", "i", nombre + "-" + numero + "-" + localidad + "-" + contrasenia + "-" + edad + "-" + correo + "-" + genero + "-" + enlace);
+                onBackPressed();
+            } else {
+                Toast.makeText(this,"No esta completo todo el formulario", Toast.LENGTH_LONG).show(); }
         }
-        if (numero.length()==9){
-            x++;
-
-        }
-        if (!validarEmail(correo)){
-            txtCorreo.setError("Email no válido");
-        }else{
-            x++;
-
-        }
-        if (localidad.length()>2){
-            x++;
-
-        }
-        if (!(txtEdad.getText().toString().equals(""))){
-            x++;
-
-        }
-        if (!(txtPassword.getText().toString().equals(""))){
-            x++;
-
-        }
-        genero=spiGenero.getSelectedItem().toString();
-
-
-
-        if (x==5){
-
-            tareaDB.execute("usu","i",nombre+"-"+numero+"-"+localidad+"-"+contrasenia+"-"+edad+"-"+correo+"-"+genero+"-"+enlace);
-            onBackPressed();}else{
-
-        }
-
 
     }
     private boolean validarEmail(String email) {
