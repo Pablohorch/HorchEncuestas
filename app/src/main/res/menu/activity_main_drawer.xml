@@ -6,20 +6,17 @@
     <group android:checkableBehavior="single">
         <item
             android:id="@+id/nav_sesion"
-            android:icon="@drawable/ic_menu_camera"
-            android:title="Cuenta" />
+            android:icon="@drawable/ic_account_circle_black_24dp"
+            android:title="Cuenta (Registro e Inicio)" />
         <item
             android:id="@+id/nav_encuesta"
-            android:icon="@drawable/ic_menu_gallery"
+            android:icon="@drawable/ic_add_circle_outline_black_24dp"
             android:title="Crear Encuesta" />
         <item
             android:id="@+id/nav_respuesta"
-            android:icon="@drawable/ic_menu_slideshow"
+            android:icon="@drawable/ic_listado"
             android:title="Respuestas(Proximamente)" />
-        <item
-            android:id="@+id/nav_modoNochee"
-            android:icon="@drawable/ic_menu_manage"
-            android:title="Modo Noche(Proximamente)" />
+
     </group>
 
     <item android:title="Comunicación">
@@ -27,11 +24,8 @@
             <item
                 android:id="@+id/nav_Compartir"
                 android:icon="@drawable/ic_menu_share"
-                android:title="Compartir App" />
-            <item
-                android:id="@+id/nav_send"
-                android:icon="@drawable/ic_menu_send"
-                android:title="Send" />
+                android:title="Compartir App (Proximamente)" />
+
         </menu>
     </item>
 

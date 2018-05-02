@@ -1,4 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
+
+
 <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
@@ -10,27 +12,35 @@
     <RelativeLayout
         android:id="@+id/relativoCuenta"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        tools:layout_editor_absoluteX="0dp"
+        tools:layout_editor_absoluteY="0dp">
 
         <Button
             android:id="@+id/btnCuentaIni"
-            android:layout_width="234dp"
-            android:layout_height="73dp"
+            android:layout_width="290dp"
+            android:layout_height="wrap_content"
             android:layout_alignParentTop="true"
             android:layout_centerHorizontal="true"
-            android:layout_marginTop="169dp"
+            android:layout_marginTop="194dp"
+            android:background="@drawable/botonconrellenonaranja"
             android:onClick="inicio"
-            android:text="Iniciar Sesion" />
+            android:text="Iniciar Sesion"
+            android:textSize="50px"
+            android:textStyle="bold" />
 
         <Button
             android:id="@+id/btnCuentaReg"
-            android:layout_width="234dp"
-            android:layout_height="71dp"
+            android:layout_width="290dp"
+            android:layout_height="98dp"
             android:layout_alignParentBottom="true"
             android:layout_centerHorizontal="true"
-            android:layout_marginBottom="184dp"
+            android:layout_marginBottom="187dp"
+            android:background="@drawable/botonconrellenonaranja"
             android:onClick="resgistro"
-            android:text="Registrarse" />
+            android:text="Registrarse"
+            android:textSize="50px"
+            android:textStyle="bold" />
 
         <TextView
             android:id="@+id/textView7"
@@ -39,7 +49,9 @@
             android:layout_alignParentTop="true"
             android:layout_centerHorizontal="true"
             android:layout_marginTop="67dp"
-            android:text="Eliga la opcion que requieras" />
+            android:text="Eliga la opcion que requieras"
+            android:textSize="50px"
+            android:textStyle="bold" />
 
     </RelativeLayout>
 

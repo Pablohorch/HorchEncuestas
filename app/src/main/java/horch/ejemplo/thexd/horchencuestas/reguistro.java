@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
@@ -67,6 +68,7 @@ public class reguistro extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_registro);
+        getSupportActionBar().hide();
         inicializador();
         String[] arrayGeneros = {"Mujer","Hombre","Genero Fluido","Agender","Otros"};
         spiGenero.setAdapter(new ArrayAdapter<String>(this, android.R.layout.simple_selectable_list_item, arrayGeneros));
@@ -178,7 +180,13 @@ public class reguistro extends AppCompatActivity {
 
             if (x == 6) {
 
-                tareaDB.execute("usu", "i", nombre + "-" + numero + "-" + localidad + "-" + contrasenia + "-" + edad + "-" + correo + "-" + genero + "-" + enlace);
+                executor("usu", "i", nombre + "-" + numero + "-" + localidad + "-" + contrasenia + "-" + edad + "-" + correo + "-" + genero + "-" + enlace);
+
+                //Accion despues del registro
+
+                executor("usu","e",nombre+"-"+contrasenia);
+                Toast.makeText(this,"Iniciando...", Toast.LENGTH_LONG).show();
+
                 onBackPressed();
             } else {
                 Toast.makeText(this,"No esta completo todo el formulario", Toast.LENGTH_LONG).show(); }
@@ -261,18 +269,14 @@ public class reguistro extends AppCompatActivity {
     }
 
     public void iniciarSesion(View v){
-        Boolean hacer=true;
-        if (hacer){
-            try {
+           try {
 
-                tareaDB.execute("usu","e",txtIniCorreo.getText().toString()+"-"+txtIniPass.getText().toString());
+                executor("usu","e",txtIniCorreo.getText().toString()+"-"+txtIniPass.getText().toString());
                 Toast.makeText(this,"Iniciando...", Toast.LENGTH_LONG).show();
                 onBackPressed();
             }catch (Exception e){
 
             }
-        }
-
     }
 
 
@@ -282,45 +286,6 @@ public class reguistro extends AppCompatActivity {
 
 
 
-    @SuppressLint("StaticFieldLeak")
-    AsyncTask<String,String,Vector<String>> tareaDB=new AsyncTask<String, String, Vector<String>>() {
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-        }
-
-        @Override
-        protected Vector<String> doInBackground(String... strings) {
-            Vector<String> a=new Vector<String>();
-            if (strings[0].equals("usu")){
-                if (strings[1].equals("i")){
-                    String[] informacion=strings[2].split("-");
-                    insertarPersonas(informacion[0],informacion[1],informacion[2],informacion[3],informacion[4],informacion[5],informacion[6],informacion[7]);
-                }
-                if (strings[1].equals("e")){
-                    String[] informacion=strings[2].split("-");
-                    iniciarPersona(informacion[0],informacion[1]);
-                }
-            }
-            return a;
-        }
-
-        @Override
-        protected void onProgressUpdate(String... values) {
-            super.onProgressUpdate(values);
-        }
-
-        @Override
-        protected void onPostExecute(Vector<String> strings) {
-
-        }
-
-        @Override
-        protected void onCancelled() {
-            super.onCancelled();
-        }
-
-    };
     @SuppressLint("StaticFieldLeak")
     public void executor(String lugar, String modo, String datos){
         new AsyncTask<String, String, Vector<String>>() {

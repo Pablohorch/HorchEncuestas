@@ -22,6 +22,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_margin="20dp"
+                android:textSize="56px"
+                android:textStyle="bold"
                 android:text="Pregunta: No se encuentra Preguntas sin responder" />
 
             <LinearLayout
@@ -38,6 +40,7 @@
                         android:id="@+id/btnRepsuesta1"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:layout_margin="2dp"
                         android:layout_weight="1"
                         android:enabled="false"
                         android:onClick="hacerVotacion"
@@ -47,6 +50,7 @@
                         android:id="@+id/btnrespuesta2"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:layout_margin="2dp"
                         android:layout_weight="1"
                         android:enabled="false"
                         android:onClick="hacerVotacion"
@@ -62,6 +66,7 @@
                         android:id="@+id/btnRespuesta3"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:layout_margin="2dp"
                         android:layout_weight="1"
                         android:enabled="false"
                         android:onClick="hacerVotacion"
@@ -71,6 +76,7 @@
                         android:id="@+id/btnRespuesta4"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:layout_margin="2dp"
                         android:layout_weight="1"
                         android:enabled="false"
                         android:onClick="hacerVotacion"
@@ -93,7 +99,9 @@
                     android:id="@+id/btnHacerVotacion"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_marginLeft="10dp"
                     android:layout_weight="1"
+                    android:background="@android:color/holo_orange_light"
                     android:enabled="false"
                     android:onClick="votarPregunta"
                     android:text="@string/hacerVotacion" />
@@ -102,7 +110,9 @@
                     android:id="@+id/btnSiguientesEncu"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_marginRight="10dp"
                     android:layout_weight="1"
+                    android:background="@android:color/holo_orange_light"
                     android:onClick="siguiente"
                     android:text="@string/siguiente_boton" />
 
@@ -114,6 +124,9 @@
                 android:layout_height="wrap_content"
                 android:layout_margin="25dp"
                 android:layout_weight="0"
+                android:textSize="72px"
+                android:textAlignment="center"
+                android:textStyle="bold"
                 android:text="@string/resultadoText" />
 
             <TextView
@@ -128,8 +141,11 @@
                 style="?android:attr/progressBarStyleHorizontal"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_margin="7dp"
+                android:hapticFeedbackEnabled="false"
                 android:max="100"
-                android:progress="0" />
+                android:progress="0"
+                android:progressBackgroundTint="@android:color/holo_orange_light" />
 
             <TextView
                 android:id="@+id/txtRelUno2"
@@ -143,8 +159,11 @@
                 style="?android:attr/progressBarStyleHorizontal"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_margin="7dp"
+                android:hapticFeedbackEnabled="false"
                 android:max="100"
-                android:progress="0" />
+                android:progress="0"
+                android:progressBackgroundTint="@android:color/holo_orange_light" />
 
             <TextView
                 android:id="@+id/txtRelUno3"
@@ -158,8 +177,11 @@
                 style="?android:attr/progressBarStyleHorizontal"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_margin="7dp"
+                android:hapticFeedbackEnabled="false"
                 android:max="100"
-                android:progress="0" />
+                android:progress="0"
+                android:progressBackgroundTint="@android:color/holo_orange_light" />
 
             <TextView
                 android:id="@+id/txtRelUno4"
@@ -173,8 +195,11 @@
                 style="?android:attr/progressBarStyleHorizontal"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_margin="7dp"
+                android:hapticFeedbackEnabled="false"
                 android:max="100"
-                android:progress="0" />
+                android:progress="0"
+                android:progressBackgroundTint="@android:color/holo_orange_light" />
 
         </LinearLayout>
     </ScrollView>

@@ -6,6 +6,8 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.graphics.ColorSpace;
+import android.graphics.drawable.Drawable;
 import android.media.Image;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -68,7 +70,7 @@ public class MainActivity extends conexion  implements NavigationView.OnNavigati
     String usuario="";
     static String enlace="";
 
-    BackgroundColorSpan clrSeleccion =new BackgroundColorSpan(Color.RED);
+    BackgroundColorSpan clrSeleccion =new BackgroundColorSpan(Color.argb(255,255,100,0));
     BackgroundColorSpan clrEstandar =new BackgroundColorSpan(Color.WHITE);
 
     TextView txtRes1;
@@ -205,8 +207,6 @@ public class MainActivity extends conexion  implements NavigationView.OnNavigati
                     comprobador(usuario);
                 }
             }.start();
-            Toast.makeText(this,"Inicio sesion "+enlace+"-", Toast.LENGTH_LONG).show();
-
 
         }else{
             Toast.makeText(this,"Esperando ha iniciar Sesion (Si ya lo hizo pruebe en clicar en Siguiente) ", Toast.LENGTH_LONG).show();
@@ -256,11 +256,7 @@ public class MainActivity extends conexion  implements NavigationView.OnNavigati
             startActivity(abrirRegistro);
         } else if (id == R.id.nav_respuesta) {
 
-        } else if (id == R.id.nav_modoNochee) {
-
         } else if (id == R.id.nav_Compartir) {
-
-        } else if (id == R.id.nav_send) {
 
         }
 
@@ -280,7 +276,7 @@ public class MainActivity extends conexion  implements NavigationView.OnNavigati
         btnHacerVotacion.setEnabled(true);
         btnSiguiente.setEnabled(false);
     Button btn=(Button) v;
-    btn.setBackgroundColor(clrSeleccion.getBackgroundColor());
+    btn.setBackground(getResources().getDrawable(R.drawable.borderbutton));
         if (btn.getTransitionName().equals("res1"))
             idelegido=idRespuesta1;
         if (btn.getTransitionName().equals("res2"))

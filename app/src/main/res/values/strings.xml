@@ -8,7 +8,7 @@
     <string name="action_settings">Ajuste(Proximamente)</string>
     <string name="siguiente_boton">Siguiente</string>
     <string name="hacerVotacion">Hacer Votacion</string>
-    <string name="resultadoText">Resultados :</string>
+    <string name="resultadoText">Resultados</string>
     <string name="tituloRegistro">REGISTRAR USUARIO</string>
     <string name="txtRegNick">Nick Instagram:</string>
     <string name="txtRegNombre">Nombre De Cuenta Instagram</string>
