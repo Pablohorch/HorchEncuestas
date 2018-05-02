@@ -3,11 +3,15 @@ package horch.ejemplo.thexd.horchencuestas;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.media.Image;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.text.style.BackgroundColorSpan;
+import android.util.Log;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -17,6 +21,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -25,6 +30,8 @@ import android.widget.Toast;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
+import java.net.URL;
+import java.net.URLConnection;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
@@ -33,7 +40,10 @@ import java.util.Vector;
 
 public class MainActivity extends conexion  implements NavigationView.OnNavigationItemSelectedListener {
 
-    static Vector<String> infoSesion=new Vector<String>();
+    TextView lblCabezeraTitulo;
+    TextView lblCabezeraSubTitulo;
+    ImageView imagenCabecera;
+
 
     TextView pregunta;
 
@@ -56,6 +66,7 @@ public class MainActivity extends conexion  implements NavigationView.OnNavigati
     String idelegido="";
     String idPregunta="";
     String usuario="";
+    static String enlace="";
 
     BackgroundColorSpan clrSeleccion =new BackgroundColorSpan(Color.RED);
     BackgroundColorSpan clrEstandar =new BackgroundColorSpan(Color.WHITE);
@@ -84,11 +95,16 @@ public class MainActivity extends conexion  implements NavigationView.OnNavigati
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        inicializador();
+
         Toolbar toolbar=(Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
 
         DrawerLayout drawer=(DrawerLayout) findViewById(R.id.drawer_layout);
+
+
+
         ActionBarDrawerToggle toggle=new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.addDrawerListener(toggle);
@@ -97,10 +113,20 @@ public class MainActivity extends conexion  implements NavigationView.OnNavigati
         NavigationView navigationView=(NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
-        inicializador();
+        View cabecera = navigationView.getHeaderView(0);
+
+
+        lblCabezeraTitulo=(TextView) cabecera.findViewById(R.id.tituloDesplegable);
+        lblCabezeraSubTitulo=(TextView) cabecera.findViewById(R.id.subtituloDesplegable);
+        imagenCabecera=(ImageView) cabecera.findViewById(R.id.imagenCabecera);
+
     }
     public void inicializador(){
         pregunta=(TextView) findViewById(R.id.txtrPregunta);
+
+        lblCabezeraTitulo=(TextView) findViewById(R.id.tituloDesplegable);
+        lblCabezeraSubTitulo=(TextView) findViewById(R.id.subtituloDesplegable);
+
 
         btnrespuesta1=(Button) findViewById(R.id.btnRepsuesta1);
         btnrespuesta2=(Button) findViewById(R.id.btnrespuesta2);
@@ -163,10 +189,25 @@ public class MainActivity extends conexion  implements NavigationView.OnNavigati
 
         if (existeArchivo){
             String[] informacion=textazo.split("-");
-            Toast.makeText(this,"Inicio sesion "+informacion[0], Toast.LENGTH_LONG).show();
             usuario=informacion[0];
+            Toast.makeText(this,"Inicio sesion "+usuario, Toast.LENGTH_LONG).show();
 
-           executor("pre","select",informacion[0]);
+            executor("pre","select",informacion[0]);
+
+
+            lblCabezeraTitulo.setText(usuario);
+            lblCabezeraSubTitulo.setText("Se inicio Sesion Correctamente");
+
+            new Thread(){
+                @Override
+                public void run() {
+                    super.run();
+                    comprobador(usuario);
+                }
+            }.start();
+            Toast.makeText(this,"Inicio sesion "+enlace+"-", Toast.LENGTH_LONG).show();
+
+
         }else{
             Toast.makeText(this,"Esperando ha iniciar Sesion (Si ya lo hizo pruebe en clicar en Siguiente) ", Toast.LENGTH_LONG).show();
         }
@@ -228,11 +269,6 @@ public class MainActivity extends conexion  implements NavigationView.OnNavigati
         return true;
     }
 
-
-    public void votador(View v){
-        btnHacerVotacion.setEnabled(true);
-
-    }
 
     public void hacerVotacion(View v){
         btnrespuesta1.setBackgroundColor(clrEstandar.getBackgroundColor());
@@ -298,6 +334,12 @@ public class MainActivity extends conexion  implements NavigationView.OnNavigati
         txtRes3.setText("---");
         txtRes4.setText("---");
 
+        votos1=0;
+        votos2=0;
+        votos3=0;
+        votos4=0;
+
+
 
         super.onStart();
         Boolean existeArchivo=false;
@@ -330,110 +372,6 @@ public class MainActivity extends conexion  implements NavigationView.OnNavigati
 
     String[] extractor=null;
 
-
-    @SuppressLint("StaticFieldLeak")
-    AsyncTask<String,String,Vector<String>> tareaDBResponde=new AsyncTask<String, String, Vector<String>>() {
-        @Override
-
-        protected void onPreExecute() {
-            super.onPreExecute();
-        }
-
-        @Override
-        protected Vector<String> doInBackground(String... strings) {
-
-            Vector<String> a=new Vector<String>();
-            if (strings[0].equals("usu")){
-                if (strings[1].equals("i")){
-                    String[] informacion=strings[2].split("-");
-                    insertarPersonas(informacion[0],informacion[1],informacion[2],informacion[3],informacion[4],informacion[5],informacion[6],informacion[7]);
-                }
-                if (strings[1].equals("e")){
-                    String[] informacion=strings[2].split("-");
-                    iniciarPersona(informacion[0],informacion[1]);
-                }
-            }
-            if (strings[0].equals("pre")){
-                if (strings[1].equals("select")){
-                    extractorPregunta(strings[2]);
-                }
-                if (strings[1].equals("insertRes")){
-                    //responder pregunta
-                    String[] informacion=strings[2].split("-");
-                    PersonaResponde(informacion[0],informacion[1]);
-                }
-            }
-            return a;
-        }
-
-        @Override
-        protected void onProgressUpdate(String... values) {
-            super.onProgressUpdate(values);
-        }
-
-        @Override
-        protected void onPostExecute(Vector<String> strings) {
-
-        }
-
-        @Override
-        protected void onCancelled() {
-            super.onCancelled();
-        }
-
-    };
-
-    @SuppressLint("StaticFieldLeak")
-    AsyncTask<String,String,Vector<String>> tareaDB=new AsyncTask<String, String, Vector<String>>() {
-        @Override
-
-        protected void onPreExecute() {
-            super.onPreExecute();
-        }
-
-        @Override
-        protected Vector<String> doInBackground(String... strings) {
-
-            Vector<String> a=new Vector<String>();
-            if (strings[0].equals("usu")){
-                if (strings[1].equals("i")){
-                    String[] informacion=strings[2].split("-");
-                    insertarPersonas(informacion[0],informacion[1],informacion[2],informacion[3],informacion[4],informacion[5],informacion[6],informacion[7]);
-                }
-                if (strings[1].equals("e")){
-                    String[] informacion=strings[2].split("-");
-                    iniciarPersona(informacion[0],informacion[1]);
-                }
-            }
-            if (strings[0].equals("pre")){
-                if (strings[1].equals("select")){
-                    extractorPregunta(strings[2]);
-                }
-                if (strings[1].equals("insertRes")){
-                    //responder pregunta
-                    String[] informacion=strings[2].split("-");
-                    PersonaResponde(informacion[0],informacion[1]);
-                }
-            }
-            return a;
-        }
-
-        @Override
-        protected void onProgressUpdate(String... values) {
-            super.onProgressUpdate(values);
-        }
-
-        @Override
-        protected void onPostExecute(Vector<String> strings) {
-
-        }
-
-        @Override
-        protected void onCancelled() {
-            super.onCancelled();
-        }
-
-    };
 
     public void insertarPregunta(String preguntas,String respuestas){
         try {
@@ -483,9 +421,24 @@ public class MainActivity extends conexion  implements NavigationView.OnNavigati
 
     public void PersonaResponde(String nickPersona,String idRespuesta){
         try {
+
+            votos1=0;
+            votos2=0;
+            votos3=0;
+            votos4=0;
+
+
+
+
             Connection con=ConexionBD();
             Statement st=con.createStatement();
             st.executeUpdate("insert into usuarios_respuestaNM(usuarios_idUsuarios,respuestas_idRespuestas) values('"+nickPersona+"',"+idRespuesta+")");
+
+            logCon("LOG",idRespuesta1);
+            logCon("LOG",idRespuesta2);
+            logCon("LOG",idRespuesta3);
+            logCon("LOG",idRespuesta4);
+
 
             ResultSet rs=null;
 
@@ -514,6 +467,13 @@ public class MainActivity extends conexion  implements NavigationView.OnNavigati
             comunicadorConUI.post(new Runnable() {
                 @Override
                 public void run() {
+
+                    txtRes1.setText(txtRes1.getText()+"  ("+votos1+"/"+votosTotales+")");
+                    txtRes2.setText(txtRes2.getText()+"  ("+votos2+"/"+votosTotales+")");
+                    txtRes3.setText(txtRes3.getText()+"  ("+votos3+"/"+votosTotales+")");
+                    txtRes4.setText(txtRes4.getText()+"  ("+votos4+"/"+votosTotales+")");
+
+
                     prbprogress1.setMax(votosTotales);
                     prbprogress2.setMax(votosTotales);
                     prbprogress3.setMax(votosTotales);
@@ -550,6 +510,7 @@ public class MainActivity extends conexion  implements NavigationView.OnNavigati
                 extractor=extrar;
                 con.close();
                 guardar();
+
                 return true;
             }else{
                 con.close();
@@ -583,22 +544,30 @@ public class MainActivity extends conexion  implements NavigationView.OnNavigati
             try{
                 respuesta1 = rs.getString(1);
                 idRespuesta1=rs.getString(2);
-                rs.next();}catch (Exception e){respuesta1="---";}
+                rs.next();}catch (Exception e){
+                idRespuesta1 ="";
+                respuesta1="---";}
 
             try{
                 respuesta2 = rs.getString(1);
                 idRespuesta2=rs.getString(2);
-                rs.next();}catch (Exception e){respuesta2="---";}
+                rs.next();}catch (Exception e){
+                idRespuesta2="";
+                respuesta2="---";}
 
             try{
                 respuesta3 = rs.getString(1);
                 idRespuesta3=rs.getString(2);
-                rs.next();}catch (Exception e){respuesta3="---";}
+                rs.next();}catch (Exception e){
+                idRespuesta3="";
+                respuesta3="---";}
 
             try{
                 respuesta4 = rs.getString(1);
                 idRespuesta4=rs.getString(2);
-            }catch (Exception e){respuesta4="---";}
+            }catch (Exception e){
+                idRespuesta4="";
+                respuesta4="---";}
 
             final String respuestaDev1=respuesta1;
             final String respuestaDev2=respuesta2;
@@ -766,5 +735,75 @@ public class MainActivity extends conexion  implements NavigationView.OnNavigati
         }.execute(lugar,modo,datos);
     }
 
+
+    //--------------------------------Manipulacion en HEader
+
+    public void comprobador(String nick){
+
+        try {
+            URL url=new URL("https://www.instagram.com/"+nick+"/");
+
+            URLConnection conexion = url.openConnection();
+            conexion.setDoInput(true);
+            BufferedReader reader = new BufferedReader(new InputStreamReader(conexion.getInputStream()));
+
+
+            String linea="";
+            String codigo="";
+
+
+            while ((linea = reader.readLine()) != null) {
+                codigo += linea+"\n";
+            }
+
+            int x=0;
+            int y=0;
+            String busco="profile_pic_url_hd";
+
+            boolean z=false;
+            for (int i = 0; i < (codigo.length()-busco.length()-1); i++) {
+                if (busco.equals(codigo.substring(i, i + busco.length()))) {
+                    z = true;
+                    x = i + busco.length() + 3;
+                }
+
+                if (z && codigo.substring(i, i + 4).equals(".jpg")) {
+                    y = i + 4;
+                    enlace=codigo.substring(x, y);
+
+                    break;
+                }
+
+            }
+
+            imagenCabecera.setImageBitmap(urlImageToBitmap(enlace));
+
+        } catch (Exception e) {
+
+
+        }
+
+
+    }
+
+    public Bitmap urlImageToBitmap(String urlImage) {
+        Bitmap mIcon1 = null;
+        URL url_value = null;
+        try {
+            url_value = new URL(urlImage);
+
+            if (url_value != null) {
+                mIcon1 = BitmapFactory.decodeStream(url_value.openConnection().getInputStream());
+            }
+            return mIcon1;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public void logCon(String t,String text){
+        Log.e(t,text);
+    }
 }
 
