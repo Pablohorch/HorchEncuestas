@@ -68,10 +68,10 @@ public class reguistro extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_registro);
-        getSupportActionBar().hide();
+        //getSupportActionBar().hide();
         inicializador();
         String[] arrayGeneros = {"Mujer","Hombre","Genero Fluido","Agender","Otros"};
-        spiGenero.setAdapter(new ArrayAdapter<String>(this, android.R.layout.simple_selectable_list_item, arrayGeneros));
+        spiGenero.setAdapter(new ArrayAdapter<String>(this, android.R.layout.preference_category, arrayGeneros));
 
     }
     public void inicializador(){

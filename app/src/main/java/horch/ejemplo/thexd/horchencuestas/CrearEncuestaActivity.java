@@ -30,6 +30,7 @@ public class CrearEncuestaActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_crear_encuesta);
+        //getSupportActionBar().hide();
 
         pregunta=(EditText) findViewById(R.id.insertPre);
         res1=(EditText) findViewById(R.id.insertRes1);

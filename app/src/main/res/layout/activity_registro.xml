@@ -13,6 +13,7 @@
         android:id="@+id/relativoCuenta"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:visibility="visible"
         tools:layout_editor_absoluteX="0dp"
         tools:layout_editor_absoluteY="0dp">
 
@@ -22,7 +23,7 @@
             android:layout_height="wrap_content"
             android:layout_alignParentTop="true"
             android:layout_centerHorizontal="true"
-            android:layout_marginTop="194dp"
+            android:layout_marginTop="157dp"
             android:background="@drawable/botonconrellenonaranja"
             android:onClick="inicio"
             android:text="Iniciar Sesion"
@@ -35,7 +36,7 @@
             android:layout_height="98dp"
             android:layout_alignParentBottom="true"
             android:layout_centerHorizontal="true"
-            android:layout_marginBottom="187dp"
+            android:layout_marginBottom="50dp"
             android:background="@drawable/botonconrellenonaranja"
             android:onClick="resgistro"
             android:text="Registrarse"
@@ -89,7 +90,7 @@
                 android:id="@+id/lblIniPass"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="PassWord" />
+                android:text="Password" />
 
             <EditText
                 android:id="@+id/txtInicioPass"
@@ -108,6 +109,7 @@
                 android:id="@+id/btnIniEmpezarInicio"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:background="@drawable/botonconrellenonaranja"
                 android:onClick="iniciarSesion"
                 android:text="Iniciar Sesion" />
         </LinearLayout>
@@ -125,24 +127,27 @@
             android:layout_margin="7dp"
             android:orientation="vertical">
 
+            <TextView
+                android:id="@+id/textView2"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="20dp"
+                android:layout_weight="1"
+                android:text="@string/tituloRegistro"
+                android:textAlignment="center"
+                android:textSize="72px"
+                android:textStyle="bold" />
+
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_margin="5dp"
                 android:orientation="horizontal">
 
-                <TextView
-                    android:id="@+id/textView2"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_margin="20dp"
-                    android:layout_weight="1"
-                    android:text="@string/tituloRegistro" />
-
                 <ImageView
                     android:id="@+id/imgPerfil"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
                     android:layout_margin="0dp"
                     android:layout_weight="1"
                     app:srcCompat="@drawable/ic_menu_camera" />
@@ -151,6 +156,7 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_margin="5dp"
                 android:orientation="horizontal">
 
                 <TextView
@@ -160,7 +166,8 @@
                     android:layout_margin="0dp"
                     android:layout_marginLeft="10dp"
                     android:layout_weight="1"
-                    android:text="@string/txtRegNick" />
+                    android:text="@string/txtRegNick"
+                    android:textStyle="bold" />
 
                 <EditText
                     android:id="@+id/txtRegnickNombre"
@@ -168,7 +175,10 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:ems="10"
-                    android:inputType="textPersonName" />
+                    android:inputType="textPersonName"
+                    android:textSize="18dp"
+                    android:textStyle="bold"
+                    android:typeface="sans" />
 
             </LinearLayout>
 
@@ -176,13 +186,16 @@
                 android:id="@+id/btnRegComprobar"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_margin="7dp"
                 android:layout_weight="1"
+                android:background="@drawable/botonconrellenonaranja"
                 android:onClick="clicComprobar"
                 android:text="Comprobar (Pulsar ante de reguistrar)" />
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_margin="5dp"
                 android:layout_weight="1"
                 android:orientation="horizontal">
 
@@ -192,8 +205,10 @@
                     android:layout_height="wrap_content"
                     android:layout_margin="0dp"
                     android:layout_marginLeft="10dp"
+
                     android:layout_weight="1"
-                    android:text="Numero Telefono" />
+                    android:text="Numero Telefono:"
+                    android:textStyle="bold" />
 
                 <EditText
                     android:id="@+id/txtRegNumero"
@@ -208,6 +223,7 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_margin="5dp"
                 android:layout_weight="1"
                 android:orientation="horizontal">
 
@@ -218,7 +234,8 @@
                     android:layout_margin="0dp"
                     android:layout_marginLeft="10dp"
                     android:layout_weight="1"
-                    android:text="Correo Electronico" />
+                    android:text="Correo Electronico:"
+                    android:textStyle="bold" />
 
                 <EditText
                     android:id="@+id/txtRegCorreoE"
@@ -233,6 +250,7 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_margin="5dp"
                 android:layout_weight="1"
                 android:orientation="horizontal">
 
@@ -243,7 +261,8 @@
                     android:layout_margin="0dp"
                     android:layout_marginLeft="10dp"
                     android:layout_weight="1"
-                    android:text="Localidad" />
+                    android:text="Localidad:"
+                    android:textStyle="bold" />
 
                 <EditText
                     android:id="@+id/txtRegLocalidad"
@@ -258,6 +277,7 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_margin="5dp"
                 android:layout_weight="1"
                 android:orientation="horizontal">
 
@@ -268,7 +288,8 @@
                     android:layout_margin="0dp"
                     android:layout_marginLeft="10dp"
                     android:layout_weight="1"
-                    android:text="Contraseña: " />
+                    android:text="Contraseña: "
+                    android:textStyle="bold" />
 
                 <EditText
                     android:id="@+id/txtRegPassWord"
@@ -283,6 +304,7 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_margin="5dp"
                 android:layout_weight="1"
                 android:orientation="horizontal">
 
@@ -293,7 +315,8 @@
                     android:layout_margin="0dp"
                     android:layout_marginLeft="10dp"
                     android:layout_weight="1"
-                    android:text="Edad: " />
+                    android:text="Edad: "
+                    android:textStyle="bold" />
 
                 <EditText
                     android:id="@+id/txtRegEdad"
@@ -308,6 +331,7 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_margin="5dp"
                 android:layout_weight="1"
                 android:orientation="horizontal">
 
@@ -318,7 +342,8 @@
                     android:layout_margin="0dp"
                     android:layout_marginLeft="10dp"
                     android:layout_weight="1"
-                    android:text="Genero: " />
+                    android:text="Genero: "
+                    android:textStyle="bold" />
 
                 <Spinner
                     android:id="@+id/spiRegGenero"
@@ -332,8 +357,17 @@
                 android:id="@+id/btnRegistrar"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_margin="10dp"
+                android:layout_marginBottom="30dp"
+                android:background="@drawable/botonconrellenonaranja"
                 android:onClick="resgistrar"
                 android:text="Registrar" />
+
+            <TextView
+                android:id="@+id/textView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="20dp" />
 
         </LinearLayout>
     </ScrollView>
