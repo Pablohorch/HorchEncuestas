@@ -480,7 +480,7 @@ public class reguistro extends AppCompatActivity {
         Connection con=null;
         try {
             Class.forName("com.mysql.jdbc.Driver");
-            con= DriverManager.getConnection("jdbc:mysql://sql2.freesqldatabase.com:3306/sql2233658", "sql2233658", "uK4*dD2%");
+            con= DriverManager.getConnection("jdbc:mysql://sql2.freesqldatabase.com:3306/sql2233658", "sql2233658", "null");
 
         } catch(Exception e) {
             e.printStackTrace();
